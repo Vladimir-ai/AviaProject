@@ -1,7 +1,0 @@
-databaseChangeLog:
-  - preConditions:
-      - dbms:
-          type: postgresql
-  - include:
-      file: v1/changelog_cumulative.yml
-      relativeToChangelogFile: true

@@ -1,9 +1,0 @@
-spring:
-  liquibase:
-    change-log: classpath*:migrations/changelog.yaml
-    user: postgres
-    url: jdbc:postgresql://localhost:5432/avia
-  datasource:
-    url: jdbc:postgresql://localhost:5432/avia
-    username: postgres
-    password: 1111
