@@ -25,3 +25,7 @@
 ## Ссылка на папку с документацией
 
 - [documentation](./documentation)
+
+## Демо видео на вторую аттестацию
+
+- [Демо-видео](https://drive.google.com/file/d/1O7McQo1_UUUHJ0CmD8nI6Mnwqdw4EBwk/view?usp=sharing)
