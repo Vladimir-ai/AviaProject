@@ -1,8 +1,9 @@
 package com.example.aviaapplication.api.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Flight {
+public class Flight implements Serializable {
 
     private Long flightId;
     private Date departureDate;

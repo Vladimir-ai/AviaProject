@@ -1,25 +1,29 @@
 package com.example.aviaapplication.ui.searchFlights;
 
-import android.app.Application;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.example.aviaapplication.api.models.Flight;
 
 import java.util.List;
 
-public class SearchFlightViewModel extends AndroidViewModel {
+public class SearchFlightViewModel extends ViewModel {
 
-    private SearchFlightsRepository searchFlightsRepository;
+    private SearchFlightsRepository repository = SearchFlightsRepository.getInstance();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
-    public SearchFlightViewModel(@NonNull Application application) {
-        super(application);
-        searchFlightsRepository = SearchFlightsRepository.getInstance();
+    public MutableLiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 
-    public List<Flight> getRecentFlights(){
-        return searchFlightsRepository.getViewedFlightList();
+    public LiveData<List<Flight>> findFlights( ) {
+        isLoading.setValue(true);
+        return repository.findFlight();
     }
 
+    public LiveData<List<Flight>>  getRecentFlights( ) {
+
+        return repository.getRecentFlights();
+    }
 }

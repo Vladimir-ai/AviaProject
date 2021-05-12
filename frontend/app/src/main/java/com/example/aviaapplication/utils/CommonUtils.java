@@ -2,11 +2,13 @@ package com.example.aviaapplication.utils;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -39,13 +41,15 @@ public class CommonUtils {
     }
 
 
-
-    public static void makeErrorToast(Context context, String text){
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public static void makeErrorToast(Context context, String text) {
         Toast toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
-        View view = toast.getView();
-        view.getBackground().setColorFilter(context.getColor(R.color.error_red), PorterDuff.Mode.SRC_IN);
-        TextView textView = view.findViewById(android.R.id.message);
-        textView.setTextColor(context.getColor(R.color.fiord));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            View view = toast.getView();
+            view.getBackground().setColorFilter(context.getColor(R.color.error_red), PorterDuff.Mode.SRC_IN);
+            TextView textView = view.findViewById(android.R.id.message);
+            textView.setTextColor(context.getColor(R.color.fiord));
+        }
         toast.show();
     }
 

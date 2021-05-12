@@ -1,6 +1,8 @@
 package com.example.aviaapplication.api.models;
 
-public class City {
+import java.io.Serializable;
+
+public class City implements Serializable {
     private Long id;
     private String cityName;
     private String cityCode;

@@ -1,6 +1,7 @@
 package com.example.aviaapplication.ui.searchFlights;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,14 +9,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,13 +32,11 @@ import com.example.aviaapplication.ui.cities.FragmentCitiesSearch;
 import com.example.aviaapplication.ui.foundFlights.FoundFlights;
 import com.example.aviaapplication.utils.CommonUtils;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 public class SearchFlightsFragment extends Fragment {
@@ -44,6 +46,7 @@ public class SearchFlightsFragment extends Fragment {
     private static Calendar startDate, lastDate;
     public Integer containerId = 0;
     private static City fromCity, toCity;
+    private ProgressBar progressBar;
 
     private Button searchFlightBtn;
     private static Integer countOfPersons;
@@ -52,10 +55,10 @@ public class SearchFlightsFragment extends Fragment {
     private RecyclerView recyclerView;
     private SearchFlightViewModel searchFlightViewModel;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        searchFlightViewModel = new ViewModelProvider(this).get(SearchFlightViewModel.class);
         View view = inflater.inflate(R.layout.fragment_search_flights, container, false);
         containerId = container.getId();
         initViews(view);
@@ -81,6 +84,9 @@ public class SearchFlightsFragment extends Fragment {
     }
 
     private void initViews(View rootView) {
+        searchFlightViewModel = ViewModelProviders.of(this).get(SearchFlightViewModel.class);
+
+        progressBar = rootView.findViewById(R.id.search_flights_pb);
         swapCities = rootView.findViewById(R.id.fragment_search_flights_swap_iv);
         deleteSecondCity = rootView.findViewById(R.id.fragment_search_flights_remove_sec_city_iv);
         chooseDateFlights = rootView.findViewById(R.id.choose_data);
@@ -96,10 +102,11 @@ public class SearchFlightsFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.search_flights_rv);
         recentFlightsViewAdapter = new RecentFlightsViewAdapter(this);
         recyclerView.setAdapter(recentFlightsViewAdapter);
-        updateList(searchFlightViewModel.getRecentFlights());
+        //getRecentFlights();
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("SetTextI18n")
     private void setListeners() {
         minusIV.setOnClickListener(v -> {
@@ -143,27 +150,23 @@ public class SearchFlightsFragment extends Fragment {
         searchFlightBtn.setOnClickListener(v -> {
 
             if (startDate == null || lastDate == null) {
-                CommonUtils.makeErrorToast(this.getContext(), "Укажите дату полета");
+                CommonUtils.makeErrorToast(getContext(), "Укажите дату полета");
                 return;
             }
-            if (fromCity == null){
-                CommonUtils.makeErrorToast(this.getContext(), "Укажите пункт отправления");
+            if (fromCity == null) {
+                CommonUtils.makeErrorToast(getContext(), "Укажите пункт отправления");
                 return;
             }
-            if (toCity == null){
-                CommonUtils.makeErrorToast(this.getContext(), "Укажите пункт назначения");
+            if (toCity == null) {
+                CommonUtils.makeErrorToast(getContext(), "Укажите пункт назначения");
                 return;
             }
+//            Date startDate = SearchFlightsFragment.startDate.getTime();
+//            Date lastDate = new Date(SearchFlightsFragment.lastDate.getTime().getTime() + TimeUnit.DAYS.toMillis(1));
 
-            Date bbb = startDate.getTime();
-            Date aaa = new Date(lastDate.getTime().getTime() + TimeUnit.DAYS.toMillis( 1 ));
+            //  findFlights();
 
-            Fragment f = FoundFlights.getInstance(bbb, aaa, fromCity.getId(), toCity.getId());
-            getParentFragmentManager().beginTransaction()
-                    .replace(containerId, f)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .addToBackStack(SearchFlightsFragment.class.toString())
-                    .commit();
+
         });
         deleteSecondCity.setOnClickListener(v -> {
             setCityTo(null);
@@ -184,9 +187,6 @@ public class SearchFlightsFragment extends Fragment {
         });
     }
 
-    public void updateList(List<Flight> list) {
-        recentFlightsViewAdapter.submitList(list);
-    }
 
     public void setCityFrom(City cityFrom) {
         fromCity = cityFrom;
@@ -210,10 +210,10 @@ public class SearchFlightsFragment extends Fragment {
     public void setNewDate(Calendar startDate, Calendar lastDate) {
 
         SimpleDateFormat format = new SimpleDateFormat("d MMMM ");
-        if(startDate != null && lastDate != null){
+        if (startDate != null && lastDate != null) {
             this.startDate = initDate(startDate);
             this.lastDate = initDate(lastDate);
-            if (  startDate.equals(lastDate)) {
+            if (startDate.equals(lastDate)) {
                 dateTV.setText(format.format(startDate.getTime()));
             } else {
                 dateTV.setText(format.format(startDate.getTime()) + "  \n" + format.format(lastDate.getTime()));
@@ -221,11 +221,44 @@ public class SearchFlightsFragment extends Fragment {
         }
     }
 
-    private Calendar initDate(Calendar date){
+    private Calendar initDate(Calendar date) {
         date.set(Calendar.HOUR_OF_DAY, 0);
         date.set(Calendar.MINUTE, 0);
         date.set(Calendar.SECOND, 0);
         date.set(Calendar.MILLISECOND, 0);
         return date;
+    }
+
+    void getRecentFlights() {
+
+        searchFlightViewModel.getRecentFlights()
+                .observe(getViewLifecycleOwner(), model -> {
+                    if (model == null) {
+                        Toast.makeText(getContext(), "Ошибка получения данных", Toast.LENGTH_SHORT).show();
+                    } else {
+                        recentFlightsViewAdapter.submitList(model);
+                    }
+                });
+    }
+
+    void findFlights() {
+        searchFlightViewModel.getIsLoading().observe(this, isLoading -> {
+            if (isLoading) progressBar.setVisibility(View.VISIBLE);
+            else progressBar.setVisibility(View.GONE);
+        });
+        searchFlightViewModel.findFlights()
+                .observe(this, model -> {
+                    searchFlightViewModel.getIsLoading().postValue(false);
+                    if (model == null) {
+                        Toast.makeText(getContext(), "Ошибка получения данных", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Fragment f = FoundFlights.getInstance(model);
+                        getParentFragmentManager().beginTransaction()
+                                .replace(containerId, f)
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                                .addToBackStack(SearchFlightsFragment.class.toString())
+                                .commit();
+                    }
+                });
     }
 }
