@@ -15,3 +15,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+.gitsecret/keys/random_seed
+!*.secret
+frontend/app/src/main/res/values/secrets.xml
