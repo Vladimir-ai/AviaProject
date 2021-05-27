@@ -12,4 +12,6 @@ public interface FavoriteFlightsService {
     void addToFavorite(FavoriteFlight flight);
 
     void deleteFromFavorite(Integer flightId);
+
+    List<FavoriteFlight> updateCosts();
 }

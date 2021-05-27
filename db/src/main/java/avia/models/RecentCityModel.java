@@ -20,7 +20,7 @@ public class RecentCityModel {
     @Column(name = "user_id")
     String userId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL )
     @JoinColumn(name = "city_id")
     CityModel city;
 

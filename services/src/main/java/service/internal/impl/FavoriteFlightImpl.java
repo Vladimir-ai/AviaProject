@@ -2,6 +2,7 @@ package service.internal.impl;
 
 import avia.models.FavoriteFlightModel;
 import avia.repositories.FavoriteFlightRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import service.internal.FavoriteFlightsService;
 import service.mapper.FavoriteFlightMapper;
@@ -16,6 +17,7 @@ public class FavoriteFlightImpl implements FavoriteFlightsService {
     private final FavoriteFlightRepository flightRepository;
     private final FavoriteFlightMapper flightMapper;
 
+    @Autowired
     public FavoriteFlightImpl(FavoriteFlightRepository flightRepository, FavoriteFlightMapper flightMapper) {
         this.flightRepository = flightRepository;
         this.flightMapper = flightMapper;
@@ -41,5 +43,10 @@ public class FavoriteFlightImpl implements FavoriteFlightsService {
             //обработка ошибки
 
         }
+    }
+
+    @Override
+    public List<FavoriteFlight> updateCosts() {
+        return null;
     }
 }

@@ -62,12 +62,14 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public void addRecentCity(RecentCity recentCity)   {
+        //get city
         RecentCityModel model = cityMapper.toRecentCityModel(recentCity);
         recentCityRepository.save(model);
     }
 
     @Override
     public void addRecentCity(City city, String userId) {
+        //get city
         RecentCityModel model = cityMapper.toRecentCityModel(city, userId);
         recentCityRepository.save(model);
     }
