@@ -1,11 +1,9 @@
 package service.mapper;
 
 import avia.models.PurchaseModel;
-import avia.models.RecentCityModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import service.models.Purchase;
-import service.models.RecentCity;
 
 import java.util.List;
 import java.util.stream.Collectors;

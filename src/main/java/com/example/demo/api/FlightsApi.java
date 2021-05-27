@@ -2,7 +2,6 @@ package com.example.demo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import service.internal.FavoriteFlightsService;
 import service.internal.FlightService;
 import service.models.Flight;
 import service.models.RecentFlight;

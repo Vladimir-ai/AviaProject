@@ -8,13 +8,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class City {
-    Integer id;
-    //код аэропорта
+
+    /**
+     * код аэропорта
+     */
     String PlaceId;
-    //город  аэропорт
+
+    /**
+     * город аэропорт
+     */
     String PlaceName;
 
+    /**
+     * код города
+     */
     String CityId;
-    //название страны
+
+    /**
+     * название страны
+     */
     String CountryName;
 }

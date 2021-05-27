@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 @Mapper
 public interface CityMapper {
-    @Mapping(target = "id", source = "id")
     @Mapping(target = "placeId", source = "placeId")
     @Mapping(target = "placeName", source = "placeName")
     @Mapping(target = "cityId", source = "cityId")
@@ -21,19 +20,17 @@ public interface CityMapper {
     CityModel toCityModel(City city);
 
 
-    @Mapping(target = "id", source = "id")
     @Mapping(target = "placeId", source = "placeId")
     @Mapping(target = "placeName", source = "placeName")
     @Mapping(target = "cityId", source = "cityId")
     @Mapping(target = "countryName", source = "countryName")
     City toCity(CityModel city);
 
-//    @Mapping(target = "id", source = "id")
-//    @Mapping(target = "placeId", source = "placeId")
-//    @Mapping(target = "placeName", source = "placeName")
-//    @Mapping(target = "cityId", source = "city.IataCode")
-//    @Mapping(target = "countryName", source = "countryName")
-//    City toCity(Place city, String placeName);
+    @Mapping(target = "placeId", source = "iataCode")
+    @Mapping(target = "placeName", source = "name")
+    @Mapping(target = "cityId", source = "cityId")
+    @Mapping(target = "countryName", source = "countryName")
+    City toCity(Place place);
 
     @Mapping(target = "userId", source = "userId")
     @Mapping(target = "city", source = "city")

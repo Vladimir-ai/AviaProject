@@ -8,10 +8,9 @@ import java.util.List;
 
 public interface FlightService {
 
-    List<RecentFlight> getRecentFlights(String userId );
+    List<RecentFlight> getRecentFlights(String userId);
 
     List<Flight> searchFlight(RecentFlight recentFlight) throws IOException;
 
     void addToRecent(RecentFlight recentFlight);
-
 }

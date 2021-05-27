@@ -1,11 +1,8 @@
 package service.mapper;
 
-import avia.models.PurchaseModel;
 import avia.models.RecentFlightModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import service.models.Purchase;
-import service.models.RecentCity;
 import service.models.RecentFlight;
 
 import java.util.List;
@@ -16,7 +13,6 @@ public interface RecentFlightMapper {
     @Mapping(target = "userId", source = "userId")
     @Mapping(target = "flightModel", source = "flight")
     RecentFlightModel toRecentFlightModel(RecentFlight recentFlight);
-
 
 
     @Mapping(target = "userId", source = "userId")

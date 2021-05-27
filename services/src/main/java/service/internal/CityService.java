@@ -17,5 +17,4 @@ public interface CityService {
 
     void addRecentCity(City city, String userId);
 
-
 }

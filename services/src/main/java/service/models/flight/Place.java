@@ -9,4 +9,5 @@ public class Place {
     String IataCode;
     String Name;
     String PlaceId;
+    String CityId;
 }

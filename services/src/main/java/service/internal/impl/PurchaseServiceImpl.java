@@ -3,6 +3,7 @@ package service.internal.impl;
 import avia.models.PurchaseModel;
 import avia.repositories.PurchaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import service.internal.PurchaseService;
 import service.mapper.PurchaseMapper;

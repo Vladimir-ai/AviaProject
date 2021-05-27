@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import service.internal.CityService;
@@ -25,9 +26,7 @@ import service.utils.DateDeserializer;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class FlightServiceImpl implements FlightService {
@@ -35,18 +34,20 @@ public class FlightServiceImpl implements FlightService {
     private final RecentFlightMapper recentFlightMapper;
     private final RecentFlightRepository recentFlightRepository;
     private final FlightMapper flightMapper;
-    private final FlightRepository flightRepository;
-    private final CityService cityService;
+    private   OkHttpClient client = new OkHttpClient();
+
+    @Value("${x-rapidapi-key}")
+    private String rapid;
+    @Value("${x-rapidapi-host}")
+    private String host;
 
     @Autowired
     public FlightServiceImpl(RecentFlightMapper recentFlightMapper,
                              RecentFlightRepository recentFlightRepository,
-                             FlightMapper flightMapper, FlightRepository flightRepository, CityService cityService) {
+                             FlightMapper flightMapper ) {
         this.recentFlightMapper = recentFlightMapper;
         this.recentFlightRepository = recentFlightRepository;
         this.flightMapper = flightMapper;
-        this.flightRepository = flightRepository;
-        this.cityService = cityService;
     }
 
     @Override
@@ -63,22 +64,14 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     public List<Flight> searchFlight(RecentFlight recentFlight) throws IOException {
-        //add to recent cities
-
-        cityService.addRecentCity(recentFlight.getFlight().getDestinationPlace(), recentFlight.getUserId());
-//        SimpleDateFormat dt = new SimpleDateFormat("yyyyy-mm-dd");
-//        String newstring = datetime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
                 .url("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/ru/rub/ru/" + recentFlight.getFlight().getOriginPlace().getPlaceId() + "/"
-                        + recentFlight.getFlight().getDestinationPlace().getPlaceId() + "/" + recentFlight.getFlight().getOutboundDate()  + "?inboundpartialdate=%20")
+                        + recentFlight.getFlight().getDestinationPlace().getPlaceId() + "/" + recentFlight.getFlight().getOutboundDate() + "?inboundpartialdate=%20")
                 .get()
-                .addHeader("x-rapidapi-key", "d8d5172365mshc2a2a837164b027p106993jsn2410bc2e15de")
-                .addHeader("x-rapidapi-host", "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com")
+                .addHeader("x-rapidapi-key", rapid)
+                .addHeader("x-rapidapi-host", host)
                 .build();
-
         Response response = client.newCall(request).execute();
 
         if (response.isSuccessful()) {
@@ -86,19 +79,22 @@ public class FlightServiceImpl implements FlightService {
                     .registerTypeAdapter(Date.class, new DateDeserializer())
                     .create();
             String body = Objects.requireNonNull(response.body()).string();
-            AnswerModelFlight list = gson.fromJson(body, AnswerModelFlight.class );
-            list.toString();
-            for (int i = 0; i <list.getQuotes().size() ; i++) {
+            AnswerModelFlight list = gson.fromJson(body, AnswerModelFlight.class);
+
+
+            for (int i = 0; i < list.getQuotes().size(); i++) {
+                Date date = DateDeserializer.toLandingDate(list.getQuotes().get(i).getQuoteDateTime(), list.getQuotes().get(i).getOutboundLeg().getDepartureDate());
+                list.getQuotes().get(i).getOutboundLeg().setLandingDate(date);
                 for (int j = 0; j < list.getPlaces().size(); j++) {
-                    if(list.getQuotes().get(i).getOutboundLeg().getDestinationId().equals(list.getPlaces().get(j).getPlaceId())){
+                    if (String.valueOf(list.getQuotes().get(i).getOutboundLeg().getDestinationId()).equals(list.getPlaces().get(j).getPlaceId())) {
                         list.getQuotes().get(i).getOutboundLeg().setDestinationPlace(list.getPlaces().get(j));
                     }
-                    if(list.getQuotes().get(i).getOutboundLeg().getOriginId().equals(list.getPlaces().get(j).getPlaceId())){
+                    if (String.valueOf(list.getQuotes().get(i).getOutboundLeg().getOriginId()).equals(list.getPlaces().get(j).getPlaceId())) {
                         list.getQuotes().get(i).getOutboundLeg().setOriginPlace(list.getPlaces().get(j));
                     }
                 }
             }
-         //   List<Flight> flights = flightMapper.
+            return flightMapper.toListPurchase(list.getQuotes());
         }
         return null;
     }

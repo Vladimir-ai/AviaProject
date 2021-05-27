@@ -36,7 +36,7 @@ public class CitiesApi {
 
     @GetMapping(value = "/{name}")
     List<City> getAllCities(@PathVariable("name") String name) throws IOException {
-        return cityService.searchPlaceByName(  name);
+        return cityService.searchPlaceByName(name);
     }
 
 }

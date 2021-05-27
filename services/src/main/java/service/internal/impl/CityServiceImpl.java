@@ -1,13 +1,13 @@
 package service.internal.impl;
 
 import avia.models.RecentCityModel;
-import avia.repositories.CityRepository;
 import avia.repositories.RecentCityRepository;
 import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import service.internal.CityService;
 import service.mapper.CityMapper;
@@ -22,16 +22,20 @@ import java.util.Objects;
 @Service
 public class CityServiceImpl implements CityService {
 
-    private final CityRepository cityRepository;
+    @Value("${x-rapidapi-key}")
+    private String rapid;
+    @Value("${x-rapidapi-host}")
+    private String host;
+
     private final RecentCityRepository recentCityRepository;
     private final CityMapper cityMapper;
+    private OkHttpClient client = new OkHttpClient();
 
     @Autowired
-    public CityServiceImpl(CityRepository cityRepository, RecentCityRepository recentCityRepository, CityMapper cityMapper ) {
-        this.cityRepository = cityRepository;
+    public CityServiceImpl(RecentCityRepository recentCityRepository, CityMapper cityMapper) {
         this.recentCityRepository = recentCityRepository;
         this.cityMapper = cityMapper;
-     }
+    }
 
     @Override
     public List<RecentCity> getRecentCities(String userId) {
@@ -39,16 +43,15 @@ public class CityServiceImpl implements CityService {
         return cityMapper.toListRecentCity(cityModels);
     }
 
-
     @Override
     public List<City> searchPlaceByName(String name) throws IOException {
-        OkHttpClient client = new OkHttpClient();
+
 
         Request request = new Request.Builder()
                 .url("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/autosuggest/v1.0/RU/RUB/ru/?query=" + name)
                 .get()
-                .addHeader("x-rapidapi-key", "d8d5172365mshc2a2a837164b027p106993jsn2410bc2e15de")
-                .addHeader("x-rapidapi-host", "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com")
+                .addHeader("x-rapidapi-key", rapid)
+                .addHeader("x-rapidapi-host", host)
                 .build();
 
         Response response = client.newCall(request).execute();
@@ -61,15 +64,13 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public void addRecentCity(RecentCity recentCity)   {
-        //get city
+    public void addRecentCity(RecentCity recentCity) {
         RecentCityModel model = cityMapper.toRecentCityModel(recentCity);
         recentCityRepository.save(model);
     }
 
     @Override
     public void addRecentCity(City city, String userId) {
-        //get city
         RecentCityModel model = cityMapper.toRecentCityModel(city, userId);
         recentCityRepository.save(model);
     }

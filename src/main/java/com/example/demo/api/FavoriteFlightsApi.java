@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import service.internal.FavoriteFlightsService;
 import service.models.FavoriteFlight;
-import service.models.Flight;
 
 import java.util.List;
 
@@ -33,8 +32,8 @@ public class FavoriteFlightsApi {
     }
 
     @DeleteMapping(value = "/{flight_id}" )
-    void deleteFromFavorite(@PathVariable( "flight_id") Integer flightId) {
-        favoriteFlightsService.deleteFromFavorite(flightId);
+    boolean deleteFromFavorite(@PathVariable( "flight_id") Integer flightId) {
+      return   favoriteFlightsService.deleteFromFavorite(flightId);
     }
 
 }

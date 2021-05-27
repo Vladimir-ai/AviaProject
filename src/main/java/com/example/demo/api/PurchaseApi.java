@@ -12,17 +12,17 @@ import java.util.List;
         value = "/purchase",
         produces = "application/json"
 )
-public class PurchaseFlights {
+public class PurchaseApi {
     private final PurchaseService purchaseService;
 
     @Autowired
-    public PurchaseFlights(PurchaseService purchaseService) {
+    public PurchaseApi(PurchaseService purchaseService) {
         this.purchaseService = purchaseService;
     }
 
     @PostMapping(consumes = "application/json")
-    public void takePurchase(Purchase purchase) {
-          purchaseService.takePurchase(purchase);
+    public void takePurchase(@RequestBody Purchase purchase) {
+        purchaseService.takePurchase(purchase);
     }
 
     @GetMapping(value = "/{userId}")

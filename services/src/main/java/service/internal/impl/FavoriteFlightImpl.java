@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import service.internal.FavoriteFlightsService;
 import service.mapper.FavoriteFlightMapper;
 import service.models.FavoriteFlight;
-import service.models.Flight;
 
 import java.util.List;
 
@@ -36,13 +35,12 @@ public class FavoriteFlightImpl implements FavoriteFlightsService {
     }
 
     @Override
-    public void deleteFromFavorite(Integer flightId) {
+    public boolean deleteFromFavorite(Integer flightId) {
         if (flightRepository.exists(flightId)) {
             flightRepository.delete(flightId);
-        } else {
-            //обработка ошибки
-
+            return true;
         }
+        return false;
     }
 
     @Override
