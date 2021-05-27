@@ -8,4 +8,5 @@ import java.util.List;
 public interface FavoriteFlightRepository extends CrudRepository<FavoriteFlightModel, Integer> {
 
     List<FavoriteFlightModel> findAllByUserId(String userId);
+    FavoriteFlightModel findFirstById(Integer id);
 }

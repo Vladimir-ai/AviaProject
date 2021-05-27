@@ -9,17 +9,17 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "recent_flights")
+@Table(name = "recent_flights", uniqueConstraints = {  @UniqueConstraint(columnNames = {"user_id", "flight_id" })})
 public class RecentFlightModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "recent_flights_id")
     Integer id;
 
     @Column(name = "user_id")
     String userId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "flight_id")
     FlightModel flightModel;
 }

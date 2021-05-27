@@ -15,10 +15,10 @@ public class FavoriteFlightModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "favorite_flights_id")
     Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "flight_id")
     FlightModel flightModel;
 

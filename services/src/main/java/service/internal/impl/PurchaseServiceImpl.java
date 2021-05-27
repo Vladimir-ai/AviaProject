@@ -26,7 +26,10 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public void takePurchase(Purchase purchase) {
         PurchaseModel model = purchaseMapper.toPurchaseModel(purchase);
-        purchaseRepository.save(model);
+        try {
+            purchaseRepository.save(model);
+        } catch (Exception ignored) {
+        }
     }
 
     @Override

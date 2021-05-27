@@ -31,13 +31,17 @@ public class FavoriteFlightImpl implements FavoriteFlightsService {
     @Override
     public void addToFavorite(FavoriteFlight flight) {
         FavoriteFlightModel model = flightMapper.toFavoriteFlightModel(flight);
-        flightRepository.save(model);
+        try {
+            flightRepository.save(model);
+        } catch (Exception ignored) {
+        }
     }
 
     @Override
     public boolean deleteFromFavorite(Integer flightId) {
-        if (flightRepository.exists(flightId)) {
-            flightRepository.delete(flightId);
+        FavoriteFlightModel favoriteFlightModel = flightRepository.findFirstById(flightId);
+        if (favoriteFlightModel != null) {
+            flightRepository.delete(favoriteFlightModel);
             return true;
         }
         return false;

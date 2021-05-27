@@ -34,7 +34,7 @@ public class FlightServiceImpl implements FlightService {
     private final RecentFlightMapper recentFlightMapper;
     private final RecentFlightRepository recentFlightRepository;
     private final FlightMapper flightMapper;
-    private   OkHttpClient client = new OkHttpClient();
+    private OkHttpClient client = new OkHttpClient();
 
     @Value("${x-rapidapi-key}")
     private String rapid;
@@ -44,7 +44,7 @@ public class FlightServiceImpl implements FlightService {
     @Autowired
     public FlightServiceImpl(RecentFlightMapper recentFlightMapper,
                              RecentFlightRepository recentFlightRepository,
-                             FlightMapper flightMapper ) {
+                             FlightMapper flightMapper) {
         this.recentFlightMapper = recentFlightMapper;
         this.recentFlightRepository = recentFlightRepository;
         this.flightMapper = flightMapper;
@@ -59,7 +59,11 @@ public class FlightServiceImpl implements FlightService {
     @Override
     public void addToRecent(RecentFlight recentFlight) {
         RecentFlightModel model = recentFlightMapper.toRecentFlightModel(recentFlight);
-        recentFlightRepository.save(model);
+
+        try {
+            recentFlightRepository.save(model);
+        } catch (Exception ignored) {
+        }
     }
 
     @Override

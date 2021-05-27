@@ -12,7 +12,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "city",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"place_id", "place_name", "city_code", "country_name"})
+                @UniqueConstraint(columnNames = {"place_id", "place_name", "city_code", "country_name"}
+                )
         }
 )
 public class CityModel {

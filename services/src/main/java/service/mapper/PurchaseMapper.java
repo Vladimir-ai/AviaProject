@@ -8,8 +8,9 @@ import service.models.Purchase;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper
+@Mapper(uses = {FlightMapper.class, CityMapper.class})
 public interface PurchaseMapper {
+
     @Mapping(target = "flightModel", source = "flight")
     @Mapping(target = "countPassengers", source = "countPassengers")
     @Mapping(target = "flightCost", source = "flightCost")

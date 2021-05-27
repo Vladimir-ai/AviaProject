@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Purchase {
 
+    Integer id;
     String userId;
 
     Flight flight;

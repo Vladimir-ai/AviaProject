@@ -31,16 +31,23 @@ CONSTRAINT flights_destination_place FOREIGN KEY (destination_place) REFERENCES 
 
 create TABLE recent_flights
 (
-id SERIAL PRIMARY KEY,
+recent_flights_id SERIAL PRIMARY KEY,
 flight_id INTEGER,
 user_id VARCHAR(200),
 UNIQUE (flight_id, user_id),
 CONSTRAINT recent_flights_flight_id FOREIGN KEY (flight_id) REFERENCES flights (flight_id)
 );
-
+create TABLE favorite_flights
+(
+favorite_flights_id SERIAL   PRIMARY KEY,
+flight_id INTEGER,
+user_id VARCHAR(200),
+UNIQUE (flight_id, user_id),
+CONSTRAINT favorite_flight_flight_id FOREIGN KEY (flight_id) REFERENCES flights (flight_id) ON delete RESTRICT
+);
 create TABLE user_purchase
 (
-id SERIAL PRIMARY KEY,
+user_purchase_id SERIAL PRIMARY KEY,
 flight_id INTEGER,
 user_id VARCHAR(200),
 count_passenger INTEGER,
@@ -48,11 +55,4 @@ flight_cost INTEGER,
 CONSTRAINT user_purchase_flight_id FOREIGN KEY (flight_id) REFERENCES flights (flight_id)
 );
 
-create TABLE favorite_flights
-(
-id SERIAL PRIMARY KEY,
-flight_id INTEGER,
-user_id VARCHAR(200),
-UNIQUE (flight_id, user_id),
-CONSTRAINT favorite_flights_flight_id FOREIGN KEY (flight_id) REFERENCES flights (flight_id)
-);
+
