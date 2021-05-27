@@ -1,7 +1,10 @@
 package avia.repositories;
 
-import avia.models.City;
+import avia.models.CityModel;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.RepositoryDefinition;
+import org.springframework.stereotype.Repository;
 
-public interface CityRepository extends CrudRepository<City, Integer> {
+
+public interface CityRepository extends CrudRepository<CityModel, Integer> {
 }

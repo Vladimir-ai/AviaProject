@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "recent_flights")
-public class RecentFlight {
+public class RecentFlightModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -21,5 +21,5 @@ public class RecentFlight {
 
     @ManyToOne
     @JoinColumn(name = "flight_id")
-    Flight flight;
+    FlightModel flightModel;
 }

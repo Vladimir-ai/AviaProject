@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "favorite_flights")
-public class Flight {
+public class FlightModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "flight_id")
@@ -20,11 +20,11 @@ public class Flight {
 
     @ManyToOne
     @JoinColumn(columnDefinition = "city_id")
-    City originPlace;
+    CityModel originPlace;
 
     @ManyToOne
     @JoinColumn(columnDefinition = "city_id")
-    City destinationPlace;
+    CityModel destinationPlace;
 
     Date outboundDate;
 

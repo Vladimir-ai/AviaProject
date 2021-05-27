@@ -10,9 +10,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "favorite_flights")
-public class FavoriteFlight {
-
+@Table(name = "user_purchase")
+public class PurchaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -20,8 +19,11 @@ public class FavoriteFlight {
 
     @ManyToOne
     @JoinColumn(name = "flight_id")
-    Flight flight;
+    FlightModel flightModel;
 
-    @Column(name = "user_id")
-    String userId;
+    @Column(name = "count_passenger")
+    Integer countPassengers;
+
+    @Column(name = "flight_cost")
+    Double flightCost;
 }

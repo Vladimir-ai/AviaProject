@@ -16,7 +16,7 @@ sourceCompatibility = '11'
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
-
+    implementation(project(":db"))
     implementation "com.fasterxml.jackson.core:jackson-databind:2.11.1"
     implementation "org.springframework:spring-web:5.2.7.RELEASE"
     compileOnly "org.immutables:value-annotations:$immVer"

@@ -12,22 +12,22 @@ import javax.persistence.*;
 @Entity
 @Table(name = "city")
 
-public class City {
+public class CityModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "city_id")
     Integer id;
 
     @Column(name = "place_id")
-    String PlaceId;
+    String placeId;
 
     @Column(name = "place_name")
-    String PlaceName;
+    String placeName;
 
     @Column(name = "city_code")
-    String CityId;
+    String cityId;
 
     @Column(name = "country_name")
-    String CountryName;
+    String countryName;
 
 }

@@ -10,20 +10,18 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "user_purchase")
-public class UserPurchase {
+@Table(name = "recent_city")
+public class RecentCityModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     Integer id;
 
+    @Column(name = "user_id")
+    String userId;
+
     @ManyToOne
-    @JoinColumn(name = "flight_id")
-    Flight flight;
+    @JoinColumn(name = "city_id")
+    CityModel city;
 
-    @Column(name = "count_passenger")
-    Integer countPassengers;
-
-    @Column(name = "flight_cost")
-    Double flightCost;
 }

@@ -1,7 +1,7 @@
 package avia.repositories;
 
-import avia.models.UserPurchase;
+import avia.models.PurchaseModel;
 import org.springframework.data.repository.CrudRepository;
 
-public interface UserPurchaseRepository  extends CrudRepository<UserPurchase, Integer> {
+public interface UserPurchaseRepository  extends CrudRepository<PurchaseModel, Integer> {
 }

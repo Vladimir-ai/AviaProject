@@ -1,9 +1,11 @@
 package service.internal.impl;
 
+import avia.repositories.CityRepository;
 import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import service.internal.CityService;
 import service.models.city.City;
@@ -14,12 +16,19 @@ import java.util.List;
 
 @Service
 public class CityServiceImpl implements CityService {
+
+    private final CityRepository cityRepository;
+
+    @Autowired
+    public CityServiceImpl(CityRepository cityRepository) {
+        this.cityRepository = cityRepository;
+    }
+
     @Override
     public List<City> getRecentCities(String userId) {
         //database
         return null;
     }
-
 
 
     @Override

@@ -1,7 +1,7 @@
 package avia.repositories;
 
-import avia.models.Flight;
+import avia.models.FlightModel;
 import org.springframework.data.repository.CrudRepository;
 
-public interface FlightRepository extends CrudRepository<Flight, Integer> {
+public interface FlightRepository extends CrudRepository<FlightModel, Integer> {
 }
