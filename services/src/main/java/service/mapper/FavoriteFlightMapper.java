@@ -14,6 +14,7 @@ public interface FavoriteFlightMapper {
     @Mapping(target = "flightModel", source = "flight")
     FavoriteFlightModel toFavoriteFlightModel(FavoriteFlight purchase);
 
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "userId", source = "userId")
     @Mapping(target = "flight", source = "flightModel")
     FavoriteFlight toFavoriteFlight(FavoriteFlightModel purchase);

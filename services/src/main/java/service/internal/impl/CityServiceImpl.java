@@ -8,6 +8,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import service.internal.CityService;
 import service.mapper.CityMapper;
@@ -45,8 +46,6 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public List<City> searchPlaceByName(String name) throws IOException {
-
-
         Request request = new Request.Builder()
                 .url("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/autosuggest/v1.0/RU/RUB/ru/?query=" + name)
                 .get()
@@ -66,12 +65,19 @@ public class CityServiceImpl implements CityService {
     @Override
     public void addRecentCity(RecentCity recentCity) {
         RecentCityModel model = cityMapper.toRecentCityModel(recentCity);
-        recentCityRepository.save(model);
+        try {
+            recentCityRepository.save(model);
+        } catch (Exception ignored) {
+        }
+
     }
 
     @Override
     public void addRecentCity(City city, String userId) {
         RecentCityModel model = cityMapper.toRecentCityModel(city, userId);
-        recentCityRepository.save(model);
+        try {
+            recentCityRepository.save(model);
+        } catch (Exception ignored) {
+        }
     }
 }

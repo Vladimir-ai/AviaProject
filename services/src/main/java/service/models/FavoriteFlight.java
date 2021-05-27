@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FavoriteFlight {
+    Integer id;
     Flight flight;
     String userId;
 }

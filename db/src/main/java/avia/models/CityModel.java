@@ -10,7 +10,11 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "city")
+@Table(name = "city",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"place_id", "place_name", "city_code", "country_name"})
+        }
+)
 public class CityModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

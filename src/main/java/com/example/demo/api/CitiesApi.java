@@ -1,5 +1,6 @@
 package com.example.demo.api;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 import service.internal.CityService;
 import service.models.RecentCity;
@@ -29,13 +30,12 @@ public class CitiesApi {
     }
 
     @PostMapping(value = "/user")
-    void addRecentCity(@RequestBody RecentCity city) {
+    void addRecentCity(@RequestBody RecentCity city)  {
         cityService.addRecentCity(city);
-
     }
 
     @GetMapping(value = "/{name}")
-    List<City> getAllCities(@PathVariable("name") String name) throws IOException {
+    List<City> findCity(@PathVariable("name") String name) throws IOException {
         return cityService.searchPlaceByName(name);
     }
 
