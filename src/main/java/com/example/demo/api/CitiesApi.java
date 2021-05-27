@@ -1,12 +1,10 @@
 package com.example.demo.api;
 
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import service.internal.CityService;
+import service.models.RecentCity;
 import service.models.city.City;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,13 +24,13 @@ public class CitiesApi {
     }
 
     @GetMapping(value = "/user/{user_id}")
-    List<City> getRecentCities(@PathVariable("user_id") String userId) {
+    List<RecentCity> getRecentCities(@PathVariable("user_id") String userId) {
         return cityService.getRecentCities(userId);
     }
 
-    @GetMapping(value = "/user/{user_id}/{city_id}")
-    void addRecentCity(@PathVariable("user_id") String userId, @PathVariable("city_id") String CityId) {
-        cityService.addRecentCity(userId, CityId);
+    @PostMapping(value = "/user")
+    void addRecentCity(@RequestBody RecentCity city) {
+        cityService.addRecentCity(city);
 
     }
 

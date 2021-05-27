@@ -1,6 +1,8 @@
 package service.internal.impl;
 
+import avia.models.RecentCityModel;
 import avia.repositories.CityRepository;
+import avia.repositories.RecentCityRepository;
 import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -8,26 +10,33 @@ import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import service.internal.CityService;
+import service.mapper.CityMapper;
+import service.models.RecentCity;
 import service.models.city.City;
 import service.models.city.AnswerModelCity;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CityServiceImpl implements CityService {
 
     private final CityRepository cityRepository;
+    private final RecentCityRepository recentCityRepository;
+    private final CityMapper cityMapper;
 
     @Autowired
-    public CityServiceImpl(CityRepository cityRepository) {
+    public CityServiceImpl(CityRepository cityRepository, RecentCityRepository recentCityRepository, CityMapper cityMapper ) {
         this.cityRepository = cityRepository;
-    }
+        this.recentCityRepository = recentCityRepository;
+        this.cityMapper = cityMapper;
+     }
 
     @Override
-    public List<City> getRecentCities(String userId) {
-        //database
-        return null;
+    public List<RecentCity> getRecentCities(String userId) {
+        List<RecentCityModel> cityModels = recentCityRepository.findAllByUserId(userId);
+        return cityMapper.toListRecentCity(cityModels);
     }
 
 
@@ -44,16 +53,22 @@ public class CityServiceImpl implements CityService {
 
         Response response = client.newCall(request).execute();
         if (response.isSuccessful()) {
-            String bodyy = response.body().string();
-            System.out.println(bodyy);
-            AnswerModelCity list = new Gson().fromJson(bodyy, AnswerModelCity.class);
+            String body = Objects.requireNonNull(response.body()).string();
+            AnswerModelCity list = new Gson().fromJson(body, AnswerModelCity.class);
             return list.getPlaces();
         }
         return null;
     }
 
     @Override
-    public void addRecentCity(String userId, String cityId) {
-        System.out.println("sssdds");
+    public void addRecentCity(RecentCity recentCity)   {
+        RecentCityModel model = cityMapper.toRecentCityModel(recentCity);
+        recentCityRepository.save(model);
+    }
+
+    @Override
+    public void addRecentCity(City city, String userId) {
+        RecentCityModel model = cityMapper.toRecentCityModel(city, userId);
+        recentCityRepository.save(model);
     }
 }

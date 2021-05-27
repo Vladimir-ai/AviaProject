@@ -3,6 +3,7 @@ package com.example.demo.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import service.internal.FavoriteFlightsService;
+import service.models.FavoriteFlight;
 import service.models.Flight;
 
 import java.util.List;
@@ -22,18 +23,18 @@ public class FavoriteFlightsApi {
     }
 
     @GetMapping(value = "/{user_id}")
-    List<Flight> getRecentCities(@PathVariable("user_id") String userId) {
+    List<FavoriteFlight> getFavoriteFlights(@PathVariable("user_id") String userId) {
         return favoriteFlightsService.getAllFavorite(userId);
     }
 
-    @PostMapping(value = "/{user_id}/{flightId}")
-    void addToFavorite(@PathVariable("user_id") String userId, @PathVariable("flightId") String flightId) {
-        favoriteFlightsService.addToFavorite(userId, flightId);
+    @PostMapping(consumes = "application/json")
+    void addToFavorite(@RequestBody FavoriteFlight flight) {
+        favoriteFlightsService.addToFavorite(flight);
     }
 
-    @DeleteMapping(value = "/{user_id}/{flightId}")
-    void deleteFromFavorite(@PathVariable("user_id") String userId, @PathVariable("flightId") String flightId) {
-        favoriteFlightsService.addToFavorite(userId, flightId);
+    @DeleteMapping(value = "/{flight_id}" )
+    void deleteFromFavorite(@PathVariable( "flight_id") Integer flightId) {
+        favoriteFlightsService.deleteFromFavorite(flightId);
     }
 
 }

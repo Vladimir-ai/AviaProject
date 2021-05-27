@@ -16,7 +16,8 @@ public class PurchaseModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     Integer id;
-
+    @Column(name = "user_id")
+    String userId;
     @ManyToOne
     @JoinColumn(name = "flight_id")
     FlightModel flightModel;

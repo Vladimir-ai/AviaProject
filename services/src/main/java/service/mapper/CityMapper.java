@@ -1,9 +1,14 @@
 package service.mapper;
 
 import avia.models.CityModel;
+import avia.models.RecentCityModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import service.models.RecentCity;
 import service.models.city.City;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper
 public interface CityMapper {
@@ -21,4 +26,24 @@ public interface CityMapper {
     @Mapping(target = "cityId", source = "cityId")
     @Mapping(target = "countryName", source = "countryName")
     City toCity(CityModel city);
+
+
+    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "city", source = "city")
+    RecentCityModel toRecentCityModel(RecentCity purchase);
+
+    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "city", source = "city")
+    RecentCity toRecentCity(RecentCityModel purchase);
+
+    @Mapping(target = "city", source = "city")
+    @Mapping(target = "userId", source = "userId")
+    RecentCityModel toRecentCityModel(City city, String userId);
+
+    default List<RecentCity> toListRecentCity(List<RecentCityModel> list) {
+        return list
+                .stream()
+                .map(this::toRecentCity)
+                .collect(Collectors.toList());
+    }
 }

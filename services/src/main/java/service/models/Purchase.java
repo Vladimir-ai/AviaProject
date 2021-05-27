@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Purchase {
 
+    String userId;
+
     Flight flight;
 
     Integer countPassengers;

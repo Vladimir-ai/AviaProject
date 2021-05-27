@@ -1,32 +1,27 @@
 package service.mapper;
 
-import avia.models.PurchaseModel;
-import avia.models.RecentFlightModel;
+import avia.models.FavoriteFlightModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import service.models.Purchase;
-import service.models.RecentCity;
-import service.models.RecentFlight;
+import service.models.FavoriteFlight;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper
-public interface RecentFlightMapper {
+public interface FavoriteFlightMapper {
     @Mapping(target = "userId", source = "userId")
     @Mapping(target = "flightModel", source = "flight")
-    RecentFlightModel toRecentFlightModel(RecentFlight recentFlight);
-
-
+    FavoriteFlightModel toFavoriteFlightModel(FavoriteFlight purchase);
 
     @Mapping(target = "userId", source = "userId")
     @Mapping(target = "flight", source = "flightModel")
-    RecentFlight toRecentFlight(RecentFlightModel recentFlight);
+    FavoriteFlight toFavoriteFlight(FavoriteFlightModel purchase);
 
-    default List<RecentFlight> toListPurchase(List<RecentFlightModel> list) {
+    default List<FavoriteFlight> toListFavoriteFlight(List<FavoriteFlightModel> list) {
         return list
                 .stream()
-                .map(this::toRecentFlight)
+                .map(this::toFavoriteFlight)
                 .collect(Collectors.toList());
     }
 }

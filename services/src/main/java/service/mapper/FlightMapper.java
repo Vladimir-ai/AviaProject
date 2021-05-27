@@ -21,4 +21,7 @@ public interface FlightMapper {
     @Mapping(target = "inboundDate", source = "inboundDate")
     @Mapping(target = "cost", source = "cost")
     Flight toFlight(FlightModel flight);
+
+
+
 }

@@ -5,7 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import service.internal.FavoriteFlightsService;
 import service.internal.FlightService;
 import service.models.Flight;
+import service.models.RecentFlight;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -15,9 +17,7 @@ import java.util.List;
 )
 public class FlightsApi {
 
-    //recent flights
-    //add recent
-    //searchFlight
+
     private final FlightService flightService;
 
     @Autowired
@@ -25,18 +25,18 @@ public class FlightsApi {
         this.flightService = flightService;
     }
 
-    @GetMapping(value = "/{userId}/{flightId}")
-    public List<Flight> getRecentFlights(@PathVariable String userId, @PathVariable String flightId) {
-        return flightService.getRecentFlights(userId, flightId);
+    @GetMapping(value = "/{userId}")
+    public List<RecentFlight> getRecentFlights(@PathVariable String userId) {
+        return flightService.getRecentFlights(userId);
     }
 
-    @PostMapping(consumes = "application/json")
-    public List<Flight> searchFlight(@RequestBody Flight flight) {
+    @PostMapping(value = "/search", consumes = "application/json")
+    public List<Flight> searchFlight(@RequestBody RecentFlight flight) throws IOException {
         return flightService.searchFlight(flight);
     }
 
-    @PostMapping(value = "/{userId}/{flightId}")
-    public void addToRecent(@PathVariable String userId, @PathVariable String flightId) {
-        flightService.addToRecent(userId, flightId);
+    @PostMapping(consumes = "application/json")
+    public void addToRecent(@RequestBody RecentFlight recentFlight) {
+        flightService.addToRecent(recentFlight);
     }
 }

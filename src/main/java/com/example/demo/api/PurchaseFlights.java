@@ -21,8 +21,8 @@ public class PurchaseFlights {
     }
 
     @PostMapping(consumes = "application/json")
-    public boolean takePurchase(Purchase purchase) {
-        return purchaseService.takePurchase(purchase);
+    public void takePurchase(Purchase purchase) {
+          purchaseService.takePurchase(purchase);
     }
 
     @GetMapping(value = "/{userId}")

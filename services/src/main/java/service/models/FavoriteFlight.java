@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RecentFlight {
-    String userId;
-
+public class FavoriteFlight {
     Flight flight;
+    String userId;
 }

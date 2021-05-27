@@ -10,7 +10,7 @@ import service.models.city.City;
 @NoArgsConstructor
 public class RecentCity {
 
-    Integer userId;
+    String userId;
 
     City city;
 }
