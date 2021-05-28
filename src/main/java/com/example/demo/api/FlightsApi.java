@@ -2,12 +2,11 @@ package com.example.demo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import service.internal.FlightService;
+import service.facade.FlightFacade;
 import service.models.Flight;
 import service.models.RecentFlight;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -18,24 +17,25 @@ import java.util.List;
 public class FlightsApi {
 
 
-    private final FlightService flightService;
+    private final FlightFacade flightFacade;
+
     @Autowired
-    public FlightsApi(FlightService flightService) {
-        this.flightService = flightService;
+    public FlightsApi(FlightFacade flightFacade) {
+        this.flightFacade = flightFacade;
     }
 
     @GetMapping(value = "/{userId}")
     public List<RecentFlight> getRecentFlights(@PathVariable String userId) {
-        return flightService.getRecentFlights(userId);
+        return flightFacade.getRecentFlights(userId);
     }
 
     @PostMapping(value = "/search", consumes = "application/json")
-    public List<Flight> searchFlight(@RequestBody Flight flight) throws IOException  {
-        return flightService.searchFlight(flight);
+    public List<Flight> searchFlight(@RequestBody Flight flight) throws IOException {
+        return flightFacade.searchFlight(flight);
     }
 
     @PostMapping(consumes = "application/json")
     public void addToRecent(@RequestBody RecentFlight recentFlight) {
-        flightService.addToRecent(recentFlight);
+        flightFacade.addToRecent(recentFlight);
     }
 }

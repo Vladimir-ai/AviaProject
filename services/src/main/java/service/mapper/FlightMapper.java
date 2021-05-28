@@ -4,7 +4,7 @@ import avia.models.FlightModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import service.models.Flight;
-import service.models.flight.Quote;
+import service.models.flightApiModel.Quote;
 
 import java.util.List;
 import java.util.stream.Collectors;

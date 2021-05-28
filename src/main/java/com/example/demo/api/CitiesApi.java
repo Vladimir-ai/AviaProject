@@ -1,7 +1,7 @@
 package com.example.demo.api;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
+import service.facade.CityFacade;
 import service.internal.CityService;
 import service.models.RecentCity;
 import service.models.city.City;
@@ -17,26 +17,26 @@ import java.util.List;
 )
 public class CitiesApi {
 
-    private final CityService cityService;
+    private final CityFacade cityFacade;
 
     @Autowired
-    public CitiesApi(CityService cityService) {
-        this.cityService = cityService;
+    public CitiesApi( CityFacade cityFacade) {
+        this.cityFacade = cityFacade;
     }
 
     @GetMapping(value = "/user/{user_id}")
     List<RecentCity> getRecentCities(@PathVariable("user_id") String userId) {
-        return cityService.getRecentCities(userId);
+        return cityFacade.getRecentCities(userId);
     }
 
     @PostMapping(value = "/user")
     void addRecentCity(@RequestBody RecentCity city)  {
-        cityService.addRecentCity(city);
+        cityFacade.addRecentCity(city);
     }
 
     @GetMapping(value = "/{name}")
     List<City> findCity(@PathVariable("name") String name) throws IOException {
-        return cityService.searchPlaceByName(name);
+        return cityFacade.searchPlaceByName(name);
     }
 
 }

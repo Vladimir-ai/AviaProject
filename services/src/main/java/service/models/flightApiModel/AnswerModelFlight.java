@@ -1,4 +1,4 @@
-package service.models.flight;
+package service.models.flightApiModel;
 
 import lombok.Data;
 

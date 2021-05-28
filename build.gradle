@@ -17,6 +17,7 @@ java {
 }
 dependencies {
 	implementation(project(":services"))
+	implementation "javax.validation:validation-api:2.0.1.Final"
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

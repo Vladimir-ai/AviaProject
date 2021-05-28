@@ -2,6 +2,7 @@ package com.example.demo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import service.facade.PurchaseFacade;
 import service.internal.PurchaseService;
 import service.models.Purchase;
 
@@ -13,20 +14,20 @@ import java.util.List;
         produces = "application/json"
 )
 public class PurchaseApi {
-    private final PurchaseService purchaseService;
+    private final PurchaseFacade purchaseFacade;
 
     @Autowired
-    public PurchaseApi(PurchaseService purchaseService) {
-        this.purchaseService = purchaseService;
+    public PurchaseApi(PurchaseFacade purchaseFacade) {
+        this.purchaseFacade = purchaseFacade;
     }
 
     @PostMapping(consumes = "application/json")
     public void takePurchase(@RequestBody Purchase purchase) {
-        purchaseService.takePurchase(purchase);
+        purchaseFacade.takePurchase(purchase);
     }
 
     @GetMapping(value = "/{userId}")
     public List<Purchase> getPurchases(@PathVariable String userId) {
-        return purchaseService.getPurchases(userId);
+        return purchaseFacade.getPurchases(userId);
     }
 }

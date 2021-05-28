@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import service.models.RecentCity;
 import service.models.city.City;
-import service.models.flight.Place;
+import service.models.flightApiModel.Place;
 
 import java.util.List;
 import java.util.stream.Collectors;

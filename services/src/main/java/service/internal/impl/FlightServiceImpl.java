@@ -18,7 +18,7 @@ import service.mapper.FlightMapper;
 import service.mapper.RecentFlightMapper;
 import service.models.Flight;
 import service.models.RecentFlight;
-import service.models.flight.AnswerModelFlight;
+import service.models.flightApiModel.AnswerModelFlight;
 import service.utils.DateDeserializer;
 
 import java.io.IOException;

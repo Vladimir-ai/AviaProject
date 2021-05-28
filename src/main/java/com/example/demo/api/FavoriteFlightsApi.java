@@ -2,6 +2,7 @@ package com.example.demo.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import service.facade.FavoriteFlightsFacade;
 import service.internal.FavoriteFlightsService;
 import service.models.FavoriteFlight;
 
@@ -14,26 +15,26 @@ import java.util.List;
 )
 public class FavoriteFlightsApi {
 
-    private final FavoriteFlightsService favoriteFlightsService;
+    private final FavoriteFlightsFacade favoriteFlightsFacade;
 
     @Autowired
-    public FavoriteFlightsApi(FavoriteFlightsService favoriteFlightsService) {
-        this.favoriteFlightsService = favoriteFlightsService;
+    public FavoriteFlightsApi( FavoriteFlightsFacade favoriteFlightsFacade) {
+        this.favoriteFlightsFacade = favoriteFlightsFacade;
     }
 
     @GetMapping(value = "/{user_id}")
     List<FavoriteFlight> getFavoriteFlights(@PathVariable("user_id") String userId) {
-        return favoriteFlightsService.getAllFavorite(userId);
+        return favoriteFlightsFacade.getAllFavorite(userId);
     }
 
     @PostMapping(consumes = "application/json")
     void addToFavorite(@RequestBody FavoriteFlight flight) {
-        favoriteFlightsService.addToFavorite(flight);
+        favoriteFlightsFacade.addToFavorite(flight);
     }
 
     @DeleteMapping(value = "/{flight_id}" )
     boolean deleteFromFavorite(@PathVariable( "flight_id") Integer flightId) {
-      return   favoriteFlightsService.deleteFromFavorite(flightId);
+      return   favoriteFlightsFacade.deleteFromFavorite(flightId);
     }
 
 }
