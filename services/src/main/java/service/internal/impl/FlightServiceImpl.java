@@ -119,6 +119,7 @@ public class FlightServiceImpl implements FlightService {
         FlightModel newModel = flightRepository.save(flightModel);
         return newModel.getId();
     }
+
     @Scheduled(fixedDelay = 10000)
     @Override
     public void updateCosts() throws IOException {
@@ -140,7 +141,9 @@ public class FlightServiceImpl implements FlightService {
                         .create();
                 String body = Objects.requireNonNull(response.body()).string();
                 AnswerModelFlight list = gson.fromJson(body, AnswerModelFlight.class);
-                modelList.get(i).setCost(list.getQuotes().get(0).getMinPrice());
+                if (list.getQuotes().size() == 1) {
+                    modelList.get(i).setCost(list.getQuotes().get(0).getMinPrice());
+                }
                 flightRepository.save(modelList.get(i));
             }
         }
