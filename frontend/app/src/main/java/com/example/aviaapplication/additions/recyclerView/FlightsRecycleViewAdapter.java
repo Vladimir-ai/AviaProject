@@ -19,6 +19,7 @@ import com.example.aviaapplication.api.models.Flight;
 import com.example.aviaapplication.ui.flightInfo.FlightInfoFragment;
 import com.example.aviaapplication.ui.foundFlights.FoundFlights;
 import com.example.aviaapplication.utils.CommonUtils;
+import com.yandex.metrica.YandexMetrica;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -81,8 +82,10 @@ public class FlightsRecycleViewAdapter extends RecyclerView.Adapter<FlightsRecyc
         holder.durationTV.setText(diff.format(new Date(flight.getDepartureDate().getTime() - flight.getArrivalDate().getTime())));
 
         Fragment target = FlightInfoFragment.getInstance(flight.getFlightId());
-        holder.itemView.setOnClickListener(v -> CommonUtils.goToFragment(fragment.getParentFragmentManager(),
-                R.id.nav_host_fragment, target));
+        holder.itemView.setOnClickListener(v -> {CommonUtils.goToFragment(fragment.getParentFragmentManager(),
+                R.id.nav_host_fragment, target);
+                YandexMetrica.reportEvent(target.getString(R.string.event_user_selected_flight_using_search));
+        });
 
 
     }

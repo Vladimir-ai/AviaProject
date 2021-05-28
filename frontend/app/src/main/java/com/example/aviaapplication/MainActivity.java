@@ -13,6 +13,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.yandex.metrica.YandexMetrica;
+import com.yandex.metrica.YandexMetricaConfig;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -20,6 +22,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        buildYandexMetricsConfig();
+        buildYandexMetricsStartSession();
+
+        YandexMetrica.reportEvent(getString(R.string.event_app_started));
+
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
@@ -44,5 +52,23 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+    }
+
+    private void buildYandexMetricsConfig(){
+        YandexMetricaConfig config = YandexMetricaConfig.newConfigBuilder(getString(R.string.yandex_metrics)).build();
+        // Initializing the AppMetrica SDK.
+        YandexMetrica.activate(getApplicationContext(), config);
+        // Automatic tracking of user activity.
+        YandexMetrica.enableActivityAutoTracking(this.getApplication());
+    }
+
+    private void buildYandexMetricsStartSession(){
+        // Creating an extended library configuration.
+        YandexMetricaConfig config = YandexMetricaConfig.newConfigBuilder(getString(R.string.yandex_metrics))
+                // Setting the length of the session timeout.
+                .withSessionTimeout(15)
+                .build();
+        // Initializing the AppMetrica SDK.
+        YandexMetrica.activate(getApplicationContext(), config);
     }
 }

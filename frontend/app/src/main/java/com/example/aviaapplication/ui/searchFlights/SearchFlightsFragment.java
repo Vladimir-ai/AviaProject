@@ -31,12 +31,16 @@ import com.example.aviaapplication.api.models.Flight;
 import com.example.aviaapplication.ui.cities.FragmentCitiesSearch;
 import com.example.aviaapplication.ui.foundFlights.FoundFlights;
 import com.example.aviaapplication.utils.CommonUtils;
+import com.yandex.metrica.YandexMetrica;
+import com.yandex.metrica.impl.ob.Ya;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class SearchFlightsFragment extends Fragment {
@@ -164,7 +168,7 @@ public class SearchFlightsFragment extends Fragment {
 //            Date startDate = SearchFlightsFragment.startDate.getTime();
 //            Date lastDate = new Date(SearchFlightsFragment.lastDate.getTime().getTime() + TimeUnit.DAYS.toMillis(1));
 
-            //  findFlights();
+            findFlights();
 
 
         });
@@ -192,6 +196,10 @@ public class SearchFlightsFragment extends Fragment {
         fromCity = cityFrom;
         if (cityFrom != null) {
             cityFromTV.setText(cityFrom.getCityName());
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("city_name", cityFrom.getCityName());
+            YandexMetrica.reportEvent(getString(R.string.event_selected_departure_city), result);
         } else {
             cityFromTV.setText("Откуда");
         }
@@ -201,6 +209,10 @@ public class SearchFlightsFragment extends Fragment {
         toCity = cityTo;
         if (cityTo != null) {
             cityToTV.setText(cityTo.getCityName());
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("city_name", cityTo.getCityName());
+            YandexMetrica.reportEvent(getString(R.string.event_selected_arrival_city));
         } else {
             cityToTV.setText("Куда");
         }
@@ -213,11 +225,17 @@ public class SearchFlightsFragment extends Fragment {
         if (startDate != null && lastDate != null) {
             this.startDate = initDate(startDate);
             this.lastDate = initDate(lastDate);
+            Map<String, Object> result = new HashMap<>();
             if (startDate.equals(lastDate)) {
                 dateTV.setText(format.format(startDate.getTime()));
+                result.put("date", format.format(startDate.getTime()).toString());
             } else {
                 dateTV.setText(format.format(startDate.getTime()) + "  \n" + format.format(lastDate.getTime()));
+                result.put("date", format.format(startDate.getTime()) + "  \n" + format.format(lastDate.getTime()));
             }
+
+            result.put("date", format.format(startDate.getTime()));
+            YandexMetrica.reportEvent(getString(R.string.event_user_selected_dates), result);
         }
     }
 
@@ -242,12 +260,20 @@ public class SearchFlightsFragment extends Fragment {
     }
 
     void findFlights() {
-        searchFlightViewModel.getIsLoading().observe(this, isLoading -> {
+
+        searchFlightViewModel.getIsLoading().observe(this.getViewLifecycleOwner(), isLoading -> {
             if (isLoading) progressBar.setVisibility(View.VISIBLE);
             else progressBar.setVisibility(View.GONE);
         });
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("departure_city", cityFromTV.getText());
+        result.put("arrival_city", cityToTV.getText());
+        result.put("departure_date", dateTV.getText());
+        YandexMetrica.reportEvent(getString(R.string.event_user_perform_search), result);
+
         searchFlightViewModel.findFlights()
-                .observe(this, model -> {
+                .observe(this.getViewLifecycleOwner(), model -> {
                     searchFlightViewModel.getIsLoading().postValue(false);
                     if (model == null) {
                         Toast.makeText(getContext(), "Ошибка получения данных", Toast.LENGTH_SHORT).show();

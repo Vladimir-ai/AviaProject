@@ -37,6 +37,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.yandex.metrica.YandexMetrica;
 
 public class HomeFragment extends Fragment {
 
@@ -58,6 +59,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+
+        YandexMetrica.reportEvent(getString(R.string.event_user_swithed_to_home));
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         initViews(root);
@@ -138,12 +141,14 @@ public class HomeFragment extends Fragment {
         loginButton.setOnClickListener(v -> {
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
             startActivityForResult(signInIntent, RC_GET_TOKEN);
+            YandexMetrica.reportEvent(getString(R.string.event_user_logged_in));
         });
 
         logoutButton.setOnClickListener(v -> {
             mGoogleSignInClient.signOut();
             homeViewModel.logout();
             avatarView.setImageDrawable(getContext().getDrawable(R.drawable.ic_account));
+            YandexMetrica.reportEvent(getString(R.string.event_user_logged_out));
         });
 
         paymentHistory.setOnClickListener(v -> {

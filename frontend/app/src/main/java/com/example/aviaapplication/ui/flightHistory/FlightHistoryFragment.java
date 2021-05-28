@@ -17,6 +17,8 @@ import com.example.aviaapplication.R;
 import com.example.aviaapplication.additions.recyclerView.FlightHistoryRecyclerViewAdapter;
 import com.example.aviaapplication.api.models.Flight;
 import com.example.aviaapplication.api.models.RecentFlight;
+import com.yandex.metrica.YandexMetrica;
+import com.yandex.metrica.impl.ob.Ya;
 
 import java.util.List;
 
@@ -32,6 +34,9 @@ public class FlightHistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history_flights, container, false);
         flightHistoryViewModel = new ViewModelProvider(this).get(FlightHistoryViewModel.class);
+
+        YandexMetrica.reportEvent(getString(R.string.event_user_history));
+
         initViews(view);
         setUpListeners();
         return view;
