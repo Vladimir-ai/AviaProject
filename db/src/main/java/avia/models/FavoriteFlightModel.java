@@ -10,15 +10,17 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "favorite_flights")
+@Table(name = "favorite_flights",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"flight_id", "user_id"})
+)
 public class FavoriteFlightModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "favorite_flights_id")
     Integer id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "flight_id")
     FlightModel flightModel;
 

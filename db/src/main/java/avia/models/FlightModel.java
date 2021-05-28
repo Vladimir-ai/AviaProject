@@ -17,16 +17,16 @@ import java.util.List;
 @Table(name = "flights")
 public class FlightModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "flight_id")
     Integer id;
-
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(columnDefinition = "city_id")
+   // @Transient
+    @ManyToOne
+    @JoinColumn(columnDefinition = "city_id" )
     CityModel originPlace;
-
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(columnDefinition = "city_id")
+    //@Transient
+    @ManyToOne
+    @JoinColumn(columnDefinition = "city_id" )
     CityModel destinationPlace;
     @JoinColumn(columnDefinition = "outbound_date")
     Date outboundDate;

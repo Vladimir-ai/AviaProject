@@ -1,6 +1,8 @@
 package service.internal.impl;
 
+import avia.models.CityModel;
 import avia.models.RecentCityModel;
+import avia.repositories.CityRepository;
 import avia.repositories.RecentCityRepository;
 import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
@@ -8,7 +10,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import service.internal.CityService;
 import service.mapper.CityMapper;
@@ -31,11 +32,13 @@ public class CityServiceImpl implements CityService {
     private final RecentCityRepository recentCityRepository;
     private final CityMapper cityMapper;
     private OkHttpClient client = new OkHttpClient();
+    private final CityRepository cityRepository;
 
     @Autowired
-    public CityServiceImpl(RecentCityRepository recentCityRepository, CityMapper cityMapper) {
+    public CityServiceImpl(RecentCityRepository recentCityRepository, CityMapper cityMapper, CityRepository cityRepository) {
         this.recentCityRepository = recentCityRepository;
         this.cityMapper = cityMapper;
+        this.cityRepository = cityRepository;
     }
 
     @Override
@@ -64,20 +67,23 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public void addRecentCity(RecentCity recentCity) {
+        Integer idCity = addCity(recentCity.getCity());
         RecentCityModel model = cityMapper.toRecentCityModel(recentCity);
+        model.getCity().setId(idCity);
         try {
             recentCityRepository.save(model);
         } catch (Exception ignored) {
         }
-
     }
 
     @Override
-    public void addRecentCity(City city, String userId) {
-        RecentCityModel model = cityMapper.toRecentCityModel(city, userId);
-        try {
-            recentCityRepository.save(model);
-        } catch (Exception ignored) {
+    public Integer addCity(City city) {
+        CityModel model = cityRepository.findFirstByPlaceIdAndCountryNameAndCityIdAndPlaceName(city.getPlaceId(), city.getCountryName(), city.getCityId(), city.getPlaceName());
+        if (model != null) {
+            return model.getId();
         }
+        CityModel cityModel = cityMapper.toCityModel(city);
+        CityModel saved = cityRepository.save(cityModel);
+        return saved.getId();
     }
 }

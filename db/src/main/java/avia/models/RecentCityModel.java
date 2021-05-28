@@ -10,17 +10,18 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "recent_city")
+@Table(name = "recent_city", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "city_id"})
+)
 public class RecentCityModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     Integer id;
 
     @Column(name = "user_id")
     String userId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "city_id")
     CityModel city;
 

@@ -1,7 +1,5 @@
 package service.internal;
 
-
-import org.springframework.dao.DataIntegrityViolationException;
 import service.models.RecentCity;
 import service.models.city.City;
 
@@ -14,8 +12,9 @@ public interface CityService {
 
     List<City> searchPlaceByName(String name) throws IOException;
 
-    void addRecentCity(RecentCity recentCity) ;
+    void addRecentCity(RecentCity recentCity);
 
-    void addRecentCity(City city, String userId)  ;
+    Integer addCity(City city);
+
 
 }

@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 
 public interface CityRepository extends CrudRepository<CityModel, Integer> {
+
+    CityModel findFirstByPlaceIdAndCountryNameAndCityIdAndPlaceName(String placeId, String countryName, String cityId, String placeName);
 }

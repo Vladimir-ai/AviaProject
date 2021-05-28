@@ -18,7 +18,7 @@ import javax.persistence.*;
 )
 public class CityModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "city_id")
     Integer id;
 

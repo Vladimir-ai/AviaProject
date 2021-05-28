@@ -19,7 +19,7 @@ public interface RecentFlightMapper {
     @Mapping(target = "flight", source = "flightModel")
     RecentFlight toRecentFlight(RecentFlightModel recentFlight);
 
-    default List<RecentFlight> toListPurchase(List<RecentFlightModel> list) {
+    default List<RecentFlight> toListRecentFlight(List<RecentFlightModel> list) {
         return list
                 .stream()
                 .map(this::toRecentFlight)

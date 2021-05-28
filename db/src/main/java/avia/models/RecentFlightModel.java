@@ -12,14 +12,14 @@ import javax.persistence.*;
 @Table(name = "recent_flights", uniqueConstraints = {  @UniqueConstraint(columnNames = {"user_id", "flight_id" })})
 public class RecentFlightModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "recent_flights_id")
     Integer id;
 
     @Column(name = "user_id")
     String userId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "flight_id")
     FlightModel flightModel;
 }

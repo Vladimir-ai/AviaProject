@@ -11,7 +11,9 @@ public interface FlightService {
 
     List<RecentFlight> getRecentFlights(String userId);
 
-    List<Flight> searchFlight(Flight flight) throws IOException ;
+    List<Flight> searchFlight(Flight flight) throws IOException;
+
+    Integer addFlight(Flight flight);
 
     void addToRecent(RecentFlight recentFlight);
 }

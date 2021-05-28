@@ -13,14 +13,14 @@ import javax.persistence.*;
 @Table(name = "user_purchase")
 public class PurchaseModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_purchase_id")
     Integer id;
 
     @Column(name = "user_id")
     String userId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "flight_id")
     FlightModel flightModel;
 

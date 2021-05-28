@@ -5,6 +5,7 @@ import avia.repositories.FavoriteFlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import service.internal.FavoriteFlightsService;
+import service.internal.FlightService;
 import service.mapper.FavoriteFlightMapper;
 import service.models.FavoriteFlight;
 
@@ -15,11 +16,13 @@ public class FavoriteFlightImpl implements FavoriteFlightsService {
 
     private final FavoriteFlightRepository flightRepository;
     private final FavoriteFlightMapper flightMapper;
+    private final FlightService flightService;
 
     @Autowired
-    public FavoriteFlightImpl(FavoriteFlightRepository flightRepository, FavoriteFlightMapper flightMapper) {
+    public FavoriteFlightImpl(FavoriteFlightRepository flightRepository, FavoriteFlightMapper flightMapper, FlightService flightService) {
         this.flightRepository = flightRepository;
         this.flightMapper = flightMapper;
+        this.flightService = flightService;
     }
 
     @Override
@@ -31,6 +34,9 @@ public class FavoriteFlightImpl implements FavoriteFlightsService {
     @Override
     public void addToFavorite(FavoriteFlight flight) {
         FavoriteFlightModel model = flightMapper.toFavoriteFlightModel(flight);
+        Integer flightId = flightService.addFlight(flight.getFlight());
+        model.getFlightModel().setId(flightId);
+
         try {
             flightRepository.save(model);
         } catch (Exception ignored) {
