@@ -10,17 +10,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.aviaapplication.R;
 import com.example.aviaapplication.ui.flightHistory.FlightHistoryFragment;
 import com.example.aviaapplication.ui.flightInfo.FlightInfoFragment;
@@ -32,6 +36,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 public class HomeFragment extends Fragment {
 
@@ -42,6 +47,8 @@ public class HomeFragment extends Fragment {
     private Button loginButton, logoutButton, paymentHistory, telegramConfirmDialogButton;
     private View telegramConfirmDialogLayout;
     private TextView usernameTextView;
+    private RoundedImageView avatarView;
+
     private Button telegramInitDialogButton, temp, temp1;
     private Handler timerHandler;
 
@@ -68,18 +75,21 @@ public class HomeFragment extends Fragment {
         timerHandler = Handler.createAsync(Looper.getMainLooper());
         loginButton = root.findViewById(R.id.button_login);
         logoutButton = root.findViewById(R.id.button_logout);
+        avatarView = root.findViewById(R.id.avatar_iv);
+
         temp = root.findViewById(R.id.temp);  //remove before production
         temp1 = root.findViewById(R.id.temp1);
-
+        temp.setVisibility(View.GONE);
+        temp1.setVisibility(View.GONE);
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getContext());
-
 
         if (account != null){
             homeViewModel.login(account);
             usernameTextView.setText(account.getDisplayName());
             logoutButton.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.GONE);
+            Glide.with(this.getContext()).load(account.getPhotoUrl()).into(avatarView);
         }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -133,6 +143,7 @@ public class HomeFragment extends Fragment {
         logoutButton.setOnClickListener(v -> {
             mGoogleSignInClient.signOut();
             homeViewModel.logout();
+            avatarView.setImageDrawable(getContext().getDrawable(R.drawable.ic_account));
         });
 
         paymentHistory.setOnClickListener(v -> {
@@ -140,7 +151,7 @@ public class HomeFragment extends Fragment {
                 CommonUtils.goToFragment(getParentFragmentManager(),
                         R.id.nav_host_fragment, FlightHistoryFragment.class);
             else
-                CommonUtils.makeErrorToast(getContext(), getString(R.string.not_implemented));
+                CommonUtils.makeErrorToast(getContext(), "Вам нужно сначала авторизоваться");
         });
 
         telegramInitDialogButton.setOnClickListener(v -> {
@@ -150,14 +161,13 @@ public class HomeFragment extends Fragment {
         });
 
         telegramConfirmDialogButton.setOnClickListener(v -> {
-            Toast toast = Toast.makeText(this.getContext(), R.string.not_implemented, Toast.LENGTH_LONG);
-            toast.show();
+            CommonUtils.makeErrorToast(this.getContext(), getString(R.string.not_implemented));
         });
 
 
         temp.setOnClickListener(v -> {
             CommonUtils.goToFragment(getParentFragmentManager(),
-                    R.id.nav_host_fragment, FlightInfoFragment.class);
+                    R.id.nav_host_fragment, FlightInfoFragment.getInstance(1L));
         });
 
         temp1.setOnClickListener(v -> {
@@ -166,6 +176,7 @@ public class HomeFragment extends Fragment {
         });
 
     }
+
 
     Runnable timerRunnable = new Runnable() {
         @Override
@@ -195,10 +206,13 @@ public class HomeFragment extends Fragment {
 
             // TODO(developer): send ID Token to server and validate
             usernameTextView.setText(account.getDisplayName());
-            Toast.makeText(getContext(), "token: " + account.getIdToken(), Toast.LENGTH_LONG).show();
+            Glide.with(this.getContext())
+                    .load(account.getPhotoUrl())
+                    .into(avatarView);
+            //Toast.makeText(getContext(), "token: " + account.getIdToken(), Toast.LENGTH_LONG).show();
             homeViewModel.login(account);
         } catch (ApiException e) {
-            Toast.makeText(getContext(), "NO", Toast.LENGTH_LONG).show();
+            CommonUtils.makeErrorToast(this.getContext(), "Ошибка авторизации");
             usernameTextView.setText(R.string.title_user_name);
             Log.w(TAG, "handleSignInResult:error", e);
         }

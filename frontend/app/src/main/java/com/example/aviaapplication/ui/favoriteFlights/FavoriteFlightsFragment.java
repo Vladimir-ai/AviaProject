@@ -10,12 +10,15 @@ import android.widget.ProgressBar;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.aviaapplication.R;
 import com.example.aviaapplication.additions.recyclerView.FavoriteFlightsRecyclerViewAdapter;
+import com.example.aviaapplication.additions.recyclerView.FlightsRecycleViewAdapter;
 import com.example.aviaapplication.api.models.Flight;
 
 import java.util.ArrayList;
@@ -27,12 +30,13 @@ public class FavoriteFlightsFragment extends Fragment {
     private RecyclerView recyclerView;
     public ProgressBar progressBar;
     private Integer idUser;
-    private FavoriteFlightsRecyclerViewAdapter mAdapter;
+    private FlightsRecycleViewAdapter mAdapter;
     private LinearLayout emptyFavoriteListLL;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        favoriteFlightsViewModel = new ViewModelProvider(this).get(FavoriteFlightsViewModel.class);
         View view = inflater.inflate(R.layout.fragment_favorite_flights, container, false);
         initViews(view);
         return view;
@@ -41,10 +45,10 @@ public class FavoriteFlightsFragment extends Fragment {
     private void initViews(View view) {
         emptyFavoriteListLL = view.findViewById(R.id.favorite_flights_ll);
         progressBar = view.findViewById(R.id.favorite_flights_pb);
-        mAdapter = new FavoriteFlightsRecyclerViewAdapter();
+        mAdapter = new FlightsRecycleViewAdapter(this);
         recyclerView = view.findViewById(R.id.favorite_flights_rv);
         recyclerView.setAdapter(mAdapter);
-        updateList(new ArrayList<>());
+        updateList(favoriteFlightsViewModel.getFavoriteFlights());
 
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
@@ -60,7 +64,6 @@ public class FavoriteFlightsFragment extends Fragment {
     }
 
     public void updateList(List<Flight> list) {
-        list.addAll(Arrays.asList(new Flight(), new Flight(), new Flight(), new Flight(), new Flight(), new Flight(), new Flight(), new Flight()));
         if (list.isEmpty()) {
             emptyFavoriteListLL.setVisibility(View.VISIBLE);
         } else {

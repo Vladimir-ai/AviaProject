@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/first_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/light_light_gray"
@@ -113,10 +114,9 @@
                     android:id="@+id/search_flights_date_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
                     android:layout_gravity="center_vertical|start"
-                    android:text="Выберите дату"
-                   />
+                    android:layout_marginStart="5dp"
+                    android:text="Выберите дату" />
             </LinearLayout>
 
 
@@ -188,28 +188,40 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="80dp"
             android:layout_marginTop="10dp"
-            app:cornerRadius="@dimen/default_corner_radius"
             android:backgroundTint="@color/dark_blue"
-            android:text="Найти билеты"
             android:fontFamily="@font/roboto_light"
             android:letterSpacing="0"
+            android:text="Найти билеты"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="17sp" />
+            android:textSize="17sp"
+            app:cornerRadius="@dimen/default_corner_radius" />
     </LinearLayout>
+
+
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/search_flights_pb"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="30dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/dark_blue"
+        android:indeterminateTintMode="src_atop" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/first_linear_layout"
         android:background="@color/light_light_gray"
         android:orientation="vertical">
 
         <TextView
-            android:fontFamily="@font/roboto_light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/dark_blue"
+            android:fontFamily="@font/roboto_light"
             android:paddingVertical="5dp"
             android:text="Недавно просмотренные"
             android:textAlignment="center"
@@ -223,4 +235,4 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>
