@@ -19,7 +19,6 @@ public class FlightsApi {
 
 
     private final FlightService flightService;
-
     @Autowired
     public FlightsApi(FlightService flightService) {
         this.flightService = flightService;
@@ -31,7 +30,7 @@ public class FlightsApi {
     }
 
     @PostMapping(value = "/search", consumes = "application/json")
-    public List<Flight> searchFlight(@RequestBody RecentFlight flight) throws IOException, ParseException {
+    public List<Flight> searchFlight(@RequestBody Flight flight) throws IOException  {
         return flightService.searchFlight(flight);
     }
 

@@ -67,14 +67,13 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
-    public List<Flight> searchFlight(RecentFlight recentFlight) throws IOException, ParseException {
-
+    public List<Flight> searchFlight(Flight flight) throws IOException {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String outDate = dateFormat.format(recentFlight.getFlight().getOutboundDate());
+        String outDate = dateFormat.format(flight.getOutboundDate());
         Request request = new Request.Builder()
-                .url("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/ru/rub/ru/" + recentFlight.getFlight().getOriginPlace().getPlaceId() + "/"
-                        + recentFlight.getFlight().getDestinationPlace().getPlaceId() + "/" + outDate + "?inboundpartialdate=%20")
+                .url("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/ru/rub/ru/" + flight.getOriginPlace().getPlaceId() + "/"
+                        + flight.getDestinationPlace().getPlaceId() + "/" + outDate + "?inboundpartialdate=%20")
                 .get()
                 .addHeader("x-rapidapi-key", rapid)
                 .addHeader("x-rapidapi-host", host)
