@@ -1,6 +1,7 @@
 package service.internal.impl;
 
 import avia.models.FavoriteFlightModel;
+import avia.models.FlightModel;
 import avia.repositories.FavoriteFlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,8 +54,5 @@ public class FavoriteFlightImpl implements FavoriteFlightsService {
         return false;
     }
 
-    @Override
-    public List<FavoriteFlight> updateCosts() {
-        return null;
-    }
+
 }

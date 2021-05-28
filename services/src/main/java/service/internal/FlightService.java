@@ -1,5 +1,6 @@
 package service.internal;
 
+import service.models.FavoriteFlight;
 import service.models.Flight;
 import service.models.RecentFlight;
 
@@ -15,4 +16,7 @@ public interface FlightService {
     Integer addFlight(Flight flight);
 
     void addToRecent(RecentFlight recentFlight);
+
+    void updateCosts() throws IOException;
+
 }

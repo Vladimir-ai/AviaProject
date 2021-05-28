@@ -9,8 +9,11 @@ import com.google.gson.GsonBuilder;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import service.internal.CityService;
 import service.internal.FlightService;
@@ -27,6 +30,7 @@ import java.util.*;
 
 @Service
 public class FlightServiceImpl implements FlightService {
+    private Logger logger = LoggerFactory.getLogger(FlightServiceImpl.class);
 
     private final RecentFlightMapper recentFlightMapper;
     private final RecentFlightRepository recentFlightRepository;
@@ -58,8 +62,6 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     public void addToRecent(RecentFlight recentFlight) {
-
-
         RecentFlightModel model = recentFlightMapper.toRecentFlightModel(recentFlight);
         Integer flightId = addFlight(recentFlight.getFlight());
         model.getFlightModel().setId(flightId);
@@ -74,14 +76,8 @@ public class FlightServiceImpl implements FlightService {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String outDate = dateFormat.format(flight.getOutboundDate());
-        Request request = new Request.Builder()
-                .url("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/ru/rub/ru/" + flight.getOriginPlace().getPlaceId() + "/"
-                        + flight.getDestinationPlace().getPlaceId() + "/" + outDate + "?inboundpartialdate=%20")
-                .get()
-                .addHeader("x-rapidapi-key", rapid)
-                .addHeader("x-rapidapi-host", host)
-                .build();
-        Response response = client.newCall(request).execute();
+
+        Response response = searchRequestBuilder(flight.getDestinationPlace().getPlaceId(), flight.getOriginPlace().getPlaceId(), outDate);
 
         if (response.isSuccessful()) {
             Gson gson = new GsonBuilder()
@@ -123,6 +119,41 @@ public class FlightServiceImpl implements FlightService {
         FlightModel newModel = flightRepository.save(flightModel);
         return newModel.getId();
     }
+    @Scheduled(fixedDelay = 10000)
+    @Override
+    public void updateCosts() throws IOException {
+        logger.info("UPDATE cost flights");
+        //пройтись по всем рейсам, найти их, получить цену, установить новую
+        Iterable<FlightModel> models = flightRepository.findAll();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+        List<FlightModel> modelList = new ArrayList<>();
+        models.forEach(modelList::add);
+        for (int i = 0; i < modelList.size(); i++) {
 
+            String outDate = dateFormat.format(modelList.get(i).getOutboundDate());
+            Response response = searchRequestBuilder(modelList.get(i).getDestinationPlace().getPlaceId(),
+                    modelList.get(i).getOriginPlace().getPlaceId(), outDate);
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(Date.class, new DateDeserializer())
+                        .create();
+                String body = Objects.requireNonNull(response.body()).string();
+                AnswerModelFlight list = gson.fromJson(body, AnswerModelFlight.class);
+                modelList.get(i).setCost(list.getQuotes().get(0).getMinPrice());
+                flightRepository.save(modelList.get(i));
+            }
+        }
+    }
+
+    private Response searchRequestBuilder(String destinationPlace, String originPlace, String date) throws IOException {
+        Request request = new Request.Builder()
+                .url("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/ru/rub/ru/" + originPlace + "/"
+                        + destinationPlace + "/" + date + "?inboundpartialdate=%20")
+                .get()
+                .addHeader("x-rapidapi-key", rapid)
+                .addHeader("x-rapidapi-host", host)
+                .build();
+        return client.newCall(request).execute();
+    }
 }
