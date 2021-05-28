@@ -20,11 +20,11 @@ import service.mapper.FlightMapper;
 import service.mapper.RecentFlightMapper;
 import service.models.Flight;
 import service.models.RecentFlight;
-import service.models.city.AnswerModelCity;
 import service.models.flight.AnswerModelFlight;
 import service.utils.DateDeserializer;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -67,11 +67,14 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
-    public List<Flight> searchFlight(RecentFlight recentFlight) throws IOException {
+    public List<Flight> searchFlight(RecentFlight recentFlight) throws IOException, ParseException {
 
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String outDate = dateFormat.format(recentFlight.getFlight().getOutboundDate());
         Request request = new Request.Builder()
                 .url("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/ru/rub/ru/" + recentFlight.getFlight().getOriginPlace().getPlaceId() + "/"
-                        + recentFlight.getFlight().getDestinationPlace().getPlaceId() + "/" + recentFlight.getFlight().getOutboundDate() + "?inboundpartialdate=%20")
+                        + recentFlight.getFlight().getDestinationPlace().getPlaceId() + "/" + outDate + "?inboundpartialdate=%20")
                 .get()
                 .addHeader("x-rapidapi-key", rapid)
                 .addHeader("x-rapidapi-host", host)
@@ -84,7 +87,6 @@ public class FlightServiceImpl implements FlightService {
                     .create();
             String body = Objects.requireNonNull(response.body()).string();
             AnswerModelFlight list = gson.fromJson(body, AnswerModelFlight.class);
-
 
             for (int i = 0; i < list.getQuotes().size(); i++) {
                 Date date = DateDeserializer.toLandingDate(list.getQuotes().get(i).getQuoteDateTime(), list.getQuotes().get(i).getOutboundLeg().getDepartureDate());

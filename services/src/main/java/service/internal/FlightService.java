@@ -4,13 +4,14 @@ import service.models.Flight;
 import service.models.RecentFlight;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 public interface FlightService {
 
     List<RecentFlight> getRecentFlights(String userId);
 
-    List<Flight> searchFlight(RecentFlight recentFlight) throws IOException;
+    List<Flight> searchFlight(RecentFlight recentFlight) throws IOException, ParseException;
 
     void addToRecent(RecentFlight recentFlight);
 }

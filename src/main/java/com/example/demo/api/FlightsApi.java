@@ -7,6 +7,7 @@ import service.models.Flight;
 import service.models.RecentFlight;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -30,7 +31,7 @@ public class FlightsApi {
     }
 
     @PostMapping(value = "/search", consumes = "application/json")
-    public List<Flight> searchFlight(@RequestBody RecentFlight flight) throws IOException {
+    public List<Flight> searchFlight(@RequestBody RecentFlight flight) throws IOException, ParseException {
         return flightService.searchFlight(flight);
     }
 

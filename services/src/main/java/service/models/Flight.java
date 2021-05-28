@@ -1,11 +1,13 @@
 package service.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import service.models.city.City;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -16,9 +18,9 @@ public class Flight {
 
     City destinationPlace;
 
-    LocalDate outboundDate;
+    Date outboundDate;
 
-    LocalDate inboundDate;
+    Date inboundDate;
 
     Double cost;
 }

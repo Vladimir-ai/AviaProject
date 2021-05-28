@@ -30,15 +30,17 @@ public class DateDeserializer implements JsonDeserializer<Date> {
 
     public static Date toLandingDate(Date quote, Date list) {
         Date date = new Date();
+
+        date.setYear(list.getYear());
+        date.setMonth(list.getMonth());
+        date.setDate(list.getDate());
+
         date.setHours(quote.getHours());
         date.setMinutes(quote.getMinutes());
-        date.setDate(list.getDate());
-        date.setMonth(list.getMonth());
-        date.setYear(list.getYear());
+        date.setSeconds(quote.getSeconds());
 
-        if (list.getTime() < quote.getTime()) {
-
-            date.setHours(quote.getHours() + 3);
+        if (list.getTime()<date.getTime()) {
+            date.setHours(quote.getHours()+7);
         }
         return date;
     }
