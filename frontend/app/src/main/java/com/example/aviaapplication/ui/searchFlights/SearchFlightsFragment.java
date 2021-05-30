@@ -195,10 +195,10 @@ public class SearchFlightsFragment extends Fragment {
     public void setCityFrom(City cityFrom) {
         fromCity = cityFrom;
         if (cityFrom != null) {
-            cityFromTV.setText(cityFrom.getCityName());
+            cityFromTV.setText(cityFrom.getPlaceName());
 
             Map<String, Object> result = new HashMap<>();
-            result.put("city_name", cityFrom.getCityName());
+            result.put("city_name", cityFrom.getClass());
             YandexMetrica.reportEvent(getString(R.string.event_selected_departure_city), result);
         } else {
             cityFromTV.setText("Откуда");
@@ -208,10 +208,10 @@ public class SearchFlightsFragment extends Fragment {
     public void setCityTo(City cityTo) {
         toCity = cityTo;
         if (cityTo != null) {
-            cityToTV.setText(cityTo.getCityName());
+            cityToTV.setText(cityTo.getPlaceName());
 
             Map<String, Object> result = new HashMap<>();
-            result.put("city_name", cityTo.getCityName());
+            result.put("city_name", cityTo.getPlaceName());
             YandexMetrica.reportEvent(getString(R.string.event_selected_arrival_city));
         } else {
             cityToTV.setText("Куда");

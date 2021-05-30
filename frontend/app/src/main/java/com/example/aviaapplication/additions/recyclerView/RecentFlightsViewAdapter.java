@@ -51,7 +51,7 @@ public class RecentFlightsViewAdapter extends RecyclerView.Adapter<RecentFlights
         TextView dateTV = holder.itemView.findViewById(R.id.date_tv);
         TextView destTV = holder.itemView.findViewById(R.id.destinations_tv);
 
-        destTV.setText(flight.getDepCity().getCityName() + " - " + flight.getArrivalCity().getCityName());
+        destTV.setText(flight.getDepCity().getPlaceName() + " - " + flight.getArrivalCity().getPlaceName());
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.YYYY");
         dateTV.setText(dateFormat.format(flight.getDepartureDate()));
 

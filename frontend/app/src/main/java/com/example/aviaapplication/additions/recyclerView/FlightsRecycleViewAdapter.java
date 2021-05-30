@@ -63,23 +63,23 @@ public class FlightsRecycleViewAdapter extends RecyclerView.Adapter<FlightsRecyc
     public void onBindViewHolder(@NonNull FlightsRecycleViewAdapter.FlightsViewHolder holder, int position) {
         Flight flight = differ.getCurrentList().get(position);
 
-
-        flight.setArrivalCity(new City(5L, "Париж", "CDG"));
-        flight.setDepCity(new City(1L, "Воронеж", "VOZ"));
-
-        DateFormat dateFormat = new SimpleDateFormat("d MMM");
-        DateFormat timeFormat = new SimpleDateFormat("H:mm");
-        DateFormat diff = new SimpleDateFormat("H час");
-
-        holder.titleTV.setText(flight.getDepCity().getCityName() + " - " + flight.getArrivalCity().getCityName());
-        holder.priceTV.setText(flight.getEconomyPrice().toString() + "₽");
-        holder.depDateTV.setText(dateFormat.format(flight.getDepartureDate()));
-        holder.fromTimeTV.setText(timeFormat.format(flight.getDepartureDate()));
-        holder.toTimeTV.setText(timeFormat.format(flight.getArrivalDate()));
-        holder.fromCodeTV.setText(flight.getDepCity().getCityCode());
-        holder.toCodeTV.setText(flight.getArrivalCity().getCityCode());
-
-        holder.durationTV.setText(diff.format(new Date(flight.getDepartureDate().getTime() - flight.getArrivalDate().getTime())));
+//
+//        flight.setArrivalCity(new City(5L, "Париж", "CDG"));
+//        flight.setDepCity(new City(1L, "Воронеж", "VOZ"));
+//
+//        DateFormat dateFormat = new SimpleDateFormat("d MMM");
+//        DateFormat timeFormat = new SimpleDateFormat("H:mm");
+//        DateFormat diff = new SimpleDateFormat("H час");
+//
+//        holder.titleTV.setText(flight.getDepCity().getCityName() + " - " + flight.getArrivalCity().getCityName());
+//        holder.priceTV.setText(flight.getEconomyPrice().toString() + "₽");
+//        holder.depDateTV.setText(dateFormat.format(flight.getDepartureDate()));
+//        holder.fromTimeTV.setText(timeFormat.format(flight.getDepartureDate()));
+//        holder.toTimeTV.setText(timeFormat.format(flight.getArrivalDate()));
+//        holder.fromCodeTV.setText(flight.getDepCity().getCityCode());
+//        holder.toCodeTV.setText(flight.getArrivalCity().getCityCode());
+//
+//        holder.durationTV.setText(diff.format(new Date(flight.getDepartureDate().getTime() - flight.getArrivalDate().getTime())));
 
         Fragment target = FlightInfoFragment.getInstance(flight.getFlightId());
         holder.itemView.setOnClickListener(v -> {CommonUtils.goToFragment(fragment.getParentFragmentManager(),

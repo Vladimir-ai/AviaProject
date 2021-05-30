@@ -1,49 +1,34 @@
 package com.example.aviaapplication.api.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class City implements Serializable {
-    private Long id;
-    private String cityName;
-    private String cityCode;
 
+    @SerializedName("placeId")
+    @Expose
+    private String placeId;
 
-    public City() {
-        this.cityName = "Абакан";
-        this.id = Long.valueOf(1);
-    }
-    public City(String string) {
-        this.cityName = string;
-        this.id = Long.valueOf(1);
-    }
+    @SerializedName("countryName")
+    @Expose
+    private String countryName;
 
-    public City(Long id, String cityName, String cityCode) {
-        this.cityName = cityName;
-        this.cityCode = cityCode;
-        this.id = id;
-    }
+    @SerializedName("cityId")
+    @Expose
+    private String cityId;
 
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
+    @SerializedName("placeName")
+    @Expose
+    private String placeName;
 
-    public String getCityCode() {
-        return cityCode;
-    }
-
-    public void setCityCode(String cityCode) {
-        this.cityCode = cityCode;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getCityName() {
-        return cityName;
-    }
 }

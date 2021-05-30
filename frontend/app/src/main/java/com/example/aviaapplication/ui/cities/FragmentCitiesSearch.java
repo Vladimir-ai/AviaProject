@@ -9,6 +9,7 @@ import android.widget.SearchView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,6 +50,7 @@ public class FragmentCitiesSearch extends Fragment {
         } else {
             f.setCityTo(city);
         }
+
         getParentFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, f)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(SearchFlightsFragment.class.toString())
@@ -56,11 +58,16 @@ public class FragmentCitiesSearch extends Fragment {
     }
 
     private void setListeners() {
+        citiesViewModel.getCityListLiveData().observe(getViewLifecycleOwner(), cities -> {
+            if(cities!= null){
+                recycleViewAdapterAllCities.submitList(cities);
+            }
+        });
 
         simpleSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                recycleViewAdapterAllCities.getFilter().filter(query);
+                citiesViewModel.findByString(query);
                 return false;
             }
 

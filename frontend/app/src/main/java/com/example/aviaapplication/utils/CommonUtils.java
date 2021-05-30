@@ -14,6 +14,11 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.aviaapplication.R;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 public class CommonUtils {
     public static OnBackPressedCallback getOnBackPressedCallback(FragmentManager fragmentManager) {
         return new OnBackPressedCallback(true /* enabled by default */) {
@@ -51,6 +56,12 @@ public class CommonUtils {
             textView.setTextColor(context.getColor(R.color.fiord));
         }
         toast.show();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 
 }

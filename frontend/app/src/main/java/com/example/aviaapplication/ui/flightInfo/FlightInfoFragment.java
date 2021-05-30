@@ -109,13 +109,13 @@ public class FlightInfoFragment extends Fragment {
 
         depTimeTV.setText(time.format(fl.getDepartureDate()));
         depDateTV.setText(date.format(fl.getDepartureDate()));
-        depCityTV.setText(fl.getDepCity().getCityName());
-        depAirportTV.setText(fl.getDepCity().getCityCode());
+        depCityTV.setText(fl.getDepCity().getPlaceName());
+        depAirportTV.setText(fl.getDepCity().getPlaceName());
 
         landTimeTV.setText(time.format(fl.getArrivalDate()));
         landDateTV.setText(date.format(fl.getArrivalDate()));
-        landCityTV.setText(fl.getArrivalCity().getCityName());
-        landAirportTV.setText(fl.getArrivalCity().getCityCode());
+        landCityTV.setText(fl.getArrivalCity().getPlaceName());
+        landAirportTV.setText(fl.getArrivalCity().getPlaceName());
 
         buttonBuy.setText("Купить за " + fl.getEconomyPrice().toString() + "₽");
 
@@ -128,6 +128,7 @@ public class FlightInfoFragment extends Fragment {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("ClickableViewAccessibility")
     private void setUpListeners() {
         requireActivity().getOnBackPressedDispatcher()

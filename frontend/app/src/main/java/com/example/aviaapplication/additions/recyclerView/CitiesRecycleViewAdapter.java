@@ -33,7 +33,7 @@ public class CitiesRecycleViewAdapter extends RecyclerView.Adapter<CitiesRecycle
         }
     }
 
-    private List<City> filteredCities;
+    private List<City> filteredCities = new ArrayList<>();
     private List<City> basList = new ArrayList<>();
 
     @Override
@@ -47,7 +47,7 @@ public class CitiesRecycleViewAdapter extends RecyclerView.Adapter<CitiesRecycle
                 } else {
                     List<City> filteredList = new ArrayList<>();
                     for (City movie : basList) {
-                        if (movie.getCityName().toLowerCase().contains(charString.toLowerCase())) {
+                        if (movie.getPlaceName().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(movie);
                         }
                     }
@@ -77,7 +77,7 @@ public class CitiesRecycleViewAdapter extends RecyclerView.Adapter<CitiesRecycle
     private static final DiffUtil.ItemCallback<City> DIFF_CALLBACK = new DiffUtil.ItemCallback<City>() {
         @Override
         public boolean areItemsTheSame(@NonNull City oldProduct, @NonNull City newProduct) {
-            return oldProduct.getId().equals(newProduct.getId());
+            return oldProduct.getPlaceId().equals(newProduct.getPlaceId());
         }
 
         @SuppressLint("DiffUtilEquals")
@@ -98,7 +98,7 @@ public class CitiesRecycleViewAdapter extends RecyclerView.Adapter<CitiesRecycle
     @Override
     public void onBindViewHolder(@NonNull CitiesRecycleViewAdapter.CitiesViewHolder holder, int position) {
         City c = differ.getCurrentList().get(position);
-        holder.nameCityTv.setText(c.getCityName());
+        holder.nameCityTv.setText(c.getPlaceName());
         holder.itemView.setOnClickListener(v -> {
 
             fragmentCitiesSearch.sendChosenData(c);

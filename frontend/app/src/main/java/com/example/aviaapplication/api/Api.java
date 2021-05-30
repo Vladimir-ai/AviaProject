@@ -48,17 +48,17 @@ public class Api {
 
     private Api(){
         cities = new ArrayList<>();
-        cities.addAll(Arrays.asList(
-                new City(1L, "Воронеж", "VOZ"),
-                new City(2L, "Москва", "DME"),
-                new City(3L, "Анаа", "AAA"),
-                new City(4L, "Аугсбург", "AGB"),
-                new City(5L, "Париж", "CDG"),
-                new City(6L, "Лондон", "LCY"),
-                new City(7L, "Вашингтон", "DCA"),
-                new City(8L, "Берлин", "BER"),
-                new City(9L, "Стокгольм", "ARN"),
-                new City(10L, "Санкт-Петербург", "LED")));
+//        cities.addAll(Arrays.asList(
+//                new City(1L, "Воронеж", "VOZ"),
+//                new City(2L, "Москва", "DME"),
+//                new City(3L, "Анаа", "AAA"),
+//                new City(4L, "Аугсбург", "AGB"),
+//                new City(5L, "Париж", "CDG"),
+//                new City(6L, "Лондон", "LCY"),
+//                new City(7L, "Вашингтон", "DCA"),
+//                new City(8L, "Берлин", "BER"),
+//                new City(9L, "Стокгольм", "ARN"),
+//                new City(10L, "Санкт-Петербург", "LED")));
 
         users = new ArrayList<>();
 
@@ -170,8 +170,8 @@ public class Api {
         List<Flight> res = flights.stream().filter(item ->
                 item.getDepartureDate().getTime() >= from &&
                         item.getDepartureDate().getTime() <= to &&
-                        item.getDepCity().getId().equals(fromCity) &&
-                        item.getArrivalCity().getId().equals(toCity)).collect(Collectors.toList());
+                        item.getDepCity().getPlaceId().equals(fromCity) &&
+                        item.getArrivalCity().getPlaceId().equals(toCity)).collect(Collectors.toList());
         return res;
     }
 
