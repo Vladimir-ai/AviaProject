@@ -5,7 +5,9 @@ import service.facade.PurchaseFacade;
 import service.internal.PurchaseService;
 import service.models.Purchase;
 
+import javax.validation.Valid;
 import java.util.List;
+
 @Service
 public class PurchaseImpl implements PurchaseFacade {
 
@@ -16,7 +18,7 @@ public class PurchaseImpl implements PurchaseFacade {
     }
 
     @Override
-    public void takePurchase(Purchase purchase) {
+    public void takePurchase(@Valid Purchase purchase) {
         purchaseService.takePurchase(purchase);
     }
 

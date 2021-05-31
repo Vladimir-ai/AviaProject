@@ -6,6 +6,7 @@ import service.internal.FlightService;
 import service.models.Flight;
 import service.models.RecentFlight;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class FlightImpl implements FlightFacade {
     }
 
     @Override
-    public void addToRecent(RecentFlight recentFlight) {
+    public void addToRecent(@Valid RecentFlight recentFlight) {
         flightService.addToRecent(recentFlight);
     }
 }

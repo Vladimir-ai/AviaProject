@@ -5,6 +5,7 @@ import service.facade.FavoriteFlightsFacade;
 import service.internal.FavoriteFlightsService;
 import service.models.FavoriteFlight;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Service
@@ -22,12 +23,17 @@ public class FavoriteFlightsImpl implements FavoriteFlightsFacade {
     }
 
     @Override
-    public void addToFavorite(FavoriteFlight flight) {
+    public void addToFavorite(@Valid FavoriteFlight flight) {
         favoriteFlightsService.addToFavorite(flight);
     }
 
     @Override
     public boolean deleteFromFavorite(Integer flightId) {
         return favoriteFlightsService.deleteFromFavorite(flightId);
+    }
+
+    @Override
+    public Integer getLikedInfo(@Valid FavoriteFlight flight) {
+        return favoriteFlightsService.getLikedInfo(flight);
     }
 }

@@ -9,4 +9,5 @@ public interface FavoriteFlightRepository extends CrudRepository<FavoriteFlightM
 
     List<FavoriteFlightModel> findAllByUserId(String userId);
     FavoriteFlightModel findFirstById(Integer id);
+    FavoriteFlightModel findFirstByFlightModel_IdAndUserId(Integer flightId, String userId );
 }

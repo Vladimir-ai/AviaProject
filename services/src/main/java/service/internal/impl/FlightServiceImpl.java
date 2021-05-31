@@ -36,8 +36,10 @@ public class FlightServiceImpl implements FlightService {
     private final RecentFlightRepository recentFlightRepository;
     private final FlightMapper flightMapper;
     private final FlightRepository flightRepository;
-    private OkHttpClient client = new OkHttpClient();
     private final CityService cityService;
+    private OkHttpClient client = new OkHttpClient();
+
+
     @Value("${x-rapidapi-key}")
     private String rapid;
     @Value("${x-rapidapi-host}")
@@ -120,7 +122,8 @@ public class FlightServiceImpl implements FlightService {
         return newModel.getId();
     }
 
-    @Scheduled(fixedDelay = 10000)
+    //4,17 часа
+    @Scheduled(fixedDelay = 15000000)
     @Override
     public void updateCosts() throws IOException {
         logger.info("UPDATE cost flights");
@@ -148,6 +151,7 @@ public class FlightServiceImpl implements FlightService {
             }
         }
     }
+
 
     private Response searchRequestBuilder(String destinationPlace, String originPlace, String date) throws IOException {
         Request request = new Request.Builder()

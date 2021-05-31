@@ -18,7 +18,7 @@ public class FavoriteFlightsApi {
     private final FavoriteFlightsFacade favoriteFlightsFacade;
 
     @Autowired
-    public FavoriteFlightsApi( FavoriteFlightsFacade favoriteFlightsFacade) {
+    public FavoriteFlightsApi(FavoriteFlightsFacade favoriteFlightsFacade) {
         this.favoriteFlightsFacade = favoriteFlightsFacade;
     }
 
@@ -27,14 +27,21 @@ public class FavoriteFlightsApi {
         return favoriteFlightsFacade.getAllFavorite(userId);
     }
 
+    @PostMapping(value = "/likedInfo", consumes = "application/json")
+    Integer getInfo(@RequestBody FavoriteFlight flight) {
+
+        return favoriteFlightsFacade.getLikedInfo(flight);
+    }
+
+
     @PostMapping(consumes = "application/json")
     void addToFavorite(@RequestBody FavoriteFlight flight) {
         favoriteFlightsFacade.addToFavorite(flight);
     }
 
-    @DeleteMapping(value = "/{flight_id}" )
-    boolean deleteFromFavorite(@PathVariable( "flight_id") Integer flightId) {
-      return   favoriteFlightsFacade.deleteFromFavorite(flightId);
+    @DeleteMapping(value = "/{flight_id}")
+    boolean deleteFromFavorite(@PathVariable("flight_id") Integer flightId) {
+        return favoriteFlightsFacade.deleteFromFavorite(flightId);
     }
 
 }

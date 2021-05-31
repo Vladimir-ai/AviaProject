@@ -15,20 +15,20 @@ import java.util.List;
 @Service
 public class FavoriteFlightImpl implements FavoriteFlightsService {
 
-    private final FavoriteFlightRepository flightRepository;
+    private final FavoriteFlightRepository favoriteFlightRepository;
     private final FavoriteFlightMapper flightMapper;
     private final FlightService flightService;
 
     @Autowired
     public FavoriteFlightImpl(FavoriteFlightRepository flightRepository, FavoriteFlightMapper flightMapper, FlightService flightService) {
-        this.flightRepository = flightRepository;
+        this.favoriteFlightRepository = flightRepository;
         this.flightMapper = flightMapper;
         this.flightService = flightService;
     }
 
     @Override
     public List<FavoriteFlight> getAllFavorite(String userId) {
-        List<FavoriteFlightModel> models = flightRepository.findAllByUserId(userId);
+        List<FavoriteFlightModel> models = favoriteFlightRepository.findAllByUserId(userId);
         return flightMapper.toListFavoriteFlight(models);
     }
 
@@ -39,19 +39,31 @@ public class FavoriteFlightImpl implements FavoriteFlightsService {
         model.getFlightModel().setId(flightId);
 
         try {
-            flightRepository.save(model);
+            favoriteFlightRepository.save(model);
         } catch (Exception ignored) {
         }
     }
 
     @Override
-    public boolean deleteFromFavorite(Integer flightId) {
-        FavoriteFlightModel favoriteFlightModel = flightRepository.findFirstById(flightId);
+    public boolean deleteFromFavorite(Integer favoriteId) {
+        FavoriteFlightModel favoriteFlightModel = favoriteFlightRepository.findFirstById(favoriteId);
         if (favoriteFlightModel != null) {
-            flightRepository.delete(favoriteFlightModel);
+            favoriteFlightRepository.delete(favoriteFlightModel);
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Integer getLikedInfo(FavoriteFlight flight) {
+        Integer flightId = flightService.addFlight(flight.getFlight());
+        if (flightId != null) {
+            FavoriteFlightModel favoriteFlightModel = favoriteFlightRepository.findFirstByFlightModel_IdAndUserId(flightId, flight.getUserId());
+            if (favoriteFlightModel != null) {
+                return favoriteFlightModel.getId();
+            }
+        }
+        return null;
     }
 
 

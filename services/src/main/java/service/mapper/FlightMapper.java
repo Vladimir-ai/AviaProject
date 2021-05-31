@@ -19,7 +19,7 @@ public interface FlightMapper {
     @Mapping(target = "destinationPlace", source = "outboundLeg.destinationPlace")
     Flight toFlight(Quote quote);
 
-
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "originPlace", source = "originPlace")
     @Mapping(target = "destinationPlace", source = "destinationPlace")
     @Mapping(target = "outboundDate", source = "outboundDate")

@@ -12,4 +12,5 @@ public interface FavoriteFlightsService {
 
     boolean deleteFromFavorite(Integer flightId);
 
- }
+    Integer getLikedInfo(FavoriteFlight flight);
+}

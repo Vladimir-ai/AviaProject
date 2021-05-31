@@ -7,8 +7,10 @@ import service.internal.CityService;
 import service.models.RecentCity;
 import service.models.city.City;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+
 @Service
 public class CityImpl implements CityFacade {
     private final CityService cityService;
@@ -28,7 +30,7 @@ public class CityImpl implements CityFacade {
     }
 
     @Override
-    public void addRecentCity(RecentCity recentCity) {
+    public void addRecentCity(@Valid RecentCity recentCity) {
         cityService.addRecentCity(recentCity);
     }
 }
