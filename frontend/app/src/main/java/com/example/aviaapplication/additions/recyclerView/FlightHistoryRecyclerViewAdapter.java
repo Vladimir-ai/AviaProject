@@ -15,8 +15,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.aviaapplication.R;
-import com.example.aviaapplication.api.models.Flight;
-import com.example.aviaapplication.api.models.RecentFlight;
+import com.example.aviaapplication.api.models.RecentCity;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -48,30 +47,31 @@ public class FlightHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Fligh
         TextView dateTV = holder.itemView.findViewById(R.id.date_tv);
         TextView priceTV = holder.itemView.findViewById(R.id.price_tv);
 
-        RecentFlight flight = differ.getCurrentList().get(position);
+        RecentCity flight = differ.getCurrentList().get(position);
 
-        destinationTV.setText(flight.getFlightId().getDepAirportName() + "-" + flight.getFlightId().getArrivalAirportName());
-        DateFormat format = new SimpleDateFormat("dd MMMM yyyy");
-        dateTV.setText(format.format(flight.getFlightId().getDepartureDate()));
-        priceTV.setText(Integer.toString(flight.getFlightId().getBusinessPrice() * 2) + "₽");
+//        destinationTV.setText(flight.getFlightId().getDepAirportName() + "-" + flight.getFlightId().getArrivalAirportName());
+//        DateFormat format = new SimpleDateFormat("dd MMMM yyyy");
+//        dateTV.setText(format.format(flight.getFlightId().getDepartureDate()));
+//        priceTV.setText(Integer.toString(flight.getFlightId().getBusinessPrice() * 2) + "₽");
     }
 
-    private AsyncListDiffer<RecentFlight> differ = new AsyncListDiffer<>(this, DIFF_CALLBACK);
+    private AsyncListDiffer<RecentCity> differ = new AsyncListDiffer<>(this, DIFF_CALLBACK);
 
-    private static final DiffUtil.ItemCallback<RecentFlight> DIFF_CALLBACK = new DiffUtil.ItemCallback<RecentFlight>() {
+    private static final DiffUtil.ItemCallback<RecentCity> DIFF_CALLBACK = new DiffUtil.ItemCallback<RecentCity>() {
         @Override
-        public boolean areItemsTheSame(@NonNull RecentFlight oldProduct, @NonNull RecentFlight newProduct) {
-            return oldProduct.getId().equals(newProduct.getId());
+        public boolean areItemsTheSame(@NonNull RecentCity oldProduct, @NonNull RecentCity newProduct) {
+//            return oldProduct.getId().equals(newProduct.getId());
+            return false;
         }
 
         @SuppressLint("DiffUtilEquals")
         @Override
-        public boolean areContentsTheSame(@NonNull RecentFlight oldProduct, @NonNull RecentFlight newProduct) {
+        public boolean areContentsTheSame(@NonNull RecentCity oldProduct, @NonNull RecentCity newProduct) {
             return oldProduct.equals(newProduct);
         }
     };
 
-    public void submitList(List<RecentFlight> products) {
+    public void submitList(List<RecentCity> products) {
         differ.submitList(products);
     }
 

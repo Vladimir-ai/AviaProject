@@ -5,18 +5,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,27 +20,24 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.aviaapplication.R;
 import com.example.aviaapplication.ui.flightHistory.FlightHistoryFragment;
 import com.example.aviaapplication.ui.flightInfo.FlightInfoFragment;
 import com.example.aviaapplication.ui.flightInfo.PassengerListFragment;
+import com.example.aviaapplication.utils.ActivityNavigation;
 import com.example.aviaapplication.utils.CommonUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.yandex.metrica.YandexMetrica;
 
-public class HomeFragment extends Fragment {
+import lombok.val;
 
-    private static final int RC_GET_TOKEN = 9002;
-    private static final String TAG = "homeFragment";
+public class HomeFragment extends Fragment implements ActivityNavigation {
 
-    private HomeViewModel homeViewModel;
+    private LoginViewModel loginViewModel;
     private Button loginButton, logoutButton, paymentHistory, telegramConfirmDialogButton;
     private View telegramConfirmDialogLayout;
     private TextView usernameTextView;
@@ -58,7 +51,7 @@ public class HomeFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.P)
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
         YandexMetrica.reportEvent(getString(R.string.event_user_swithed_to_home));
 
@@ -87,14 +80,6 @@ public class HomeFragment extends Fragment {
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getContext());
 
-        if (account != null){
-            homeViewModel.login(account);
-            usernameTextView.setText(account.getDisplayName());
-            logoutButton.setVisibility(View.VISIBLE);
-            loginButton.setVisibility(View.GONE);
-            Glide.with(this.getContext()).load(account.getPhotoUrl()).into(avatarView);
-        }
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 //.requestServerAuthCode(getString(R.string.server_client_id))
                 .requestEmail()
@@ -106,15 +91,7 @@ public class HomeFragment extends Fragment {
 
         mGoogleSignInClient = GoogleSignIn.getClient(getParentFragment().getActivity(), gso);
 
-
-        //
-//        if (homeViewModel.isAuthorised()) {
-//            usernameTextView.setText(homeViewModel.getUserName());
-//            logoutButton.setVisibility(View.VISIBLE);
-//            loginButton.setVisibility(View.GONE);
-//        }
-
-
+        loginViewModel.setGoogleSignInClient(mGoogleSignInClient);
 
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
@@ -126,33 +103,39 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUpListeners() {
-        homeViewModel.getMutableData().observe(getViewLifecycleOwner(), value -> {
-            if (value != null){
+        loginViewModel.startActivityForResultEvent.setEventReceiver(this, this);
+        loginViewModel.getMutableData().observe(getViewLifecycleOwner(), value -> {
+            if (value != null) {
                 logoutButton.setVisibility(View.VISIBLE);
                 loginButton.setVisibility(View.GONE);
                 usernameTextView.setText(value.getName());
-            }else{
+
+                Glide.with(this.getContext())
+                        .load(value.getImageUri())
+                        .into(avatarView);
+            } else {
                 loginButton.setVisibility(View.VISIBLE);
                 logoutButton.setVisibility(View.GONE);
                 usernameTextView.setText(R.string.title_user_name);
+                avatarView.setImageDrawable(getContext().getDrawable(R.drawable.ic_account));
             }
         });
 
         loginButton.setOnClickListener(v -> {
-            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-            startActivityForResult(signInIntent, RC_GET_TOKEN);
+            loginViewModel.login();
             YandexMetrica.reportEvent(getString(R.string.event_user_logged_in));
         });
 
         logoutButton.setOnClickListener(v -> {
-            mGoogleSignInClient.signOut();
-            homeViewModel.logout();
+            loginViewModel.logout();
+            logoutButton.setVisibility(View.GONE);
+            loginButton.setVisibility(View.VISIBLE);
             avatarView.setImageDrawable(getContext().getDrawable(R.drawable.ic_account));
             YandexMetrica.reportEvent(getString(R.string.event_user_logged_out));
         });
 
         paymentHistory.setOnClickListener(v -> {
-            if (homeViewModel.isAuthorised())
+            if (loginViewModel.isAuthorised())
                 CommonUtils.goToFragment(getParentFragmentManager(),
                         R.id.nav_host_fragment, FlightHistoryFragment.class);
             else
@@ -193,34 +176,8 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        loginViewModel.onResultFromActivity(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == RC_GET_TOKEN) {
-            // [START get_id_token]
-            // This task is always completed immediately, there is no need to attach an
-            // asynchronous listener.
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
-            // [END get_id_token]
-        }
-    }
-
-    private void handleSignInResult(@NonNull Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
-            // TODO(developer): send ID Token to server and validate
-            usernameTextView.setText(account.getDisplayName());
-            Glide.with(this.getContext())
-                    .load(account.getPhotoUrl())
-                    .into(avatarView);
-            //Toast.makeText(getContext(), "token: " + account.getIdToken(), Toast.LENGTH_LONG).show();
-            homeViewModel.login(account);
-        } catch (ApiException e) {
-            CommonUtils.makeErrorToast(this.getContext(), "Ошибка авторизации");
-            usernameTextView.setText(R.string.title_user_name);
-            Log.w(TAG, "handleSignInResult:error", e);
-        }
     }
 
     @Override
@@ -230,4 +187,6 @@ public class HomeFragment extends Fragment {
         telegramConfirmDialogLayout.setVisibility(View.GONE);
         telegramInitDialogButton.setVisibility(View.VISIBLE);
     }
+
+
 }

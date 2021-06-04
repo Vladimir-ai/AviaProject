@@ -63,25 +63,21 @@ public class FlightsRecycleViewAdapter extends RecyclerView.Adapter<FlightsRecyc
     public void onBindViewHolder(@NonNull FlightsRecycleViewAdapter.FlightsViewHolder holder, int position) {
         Flight flight = differ.getCurrentList().get(position);
 
-//
-//        flight.setArrivalCity(new City(5L, "Париж", "CDG"));
-//        flight.setDepCity(new City(1L, "Воронеж", "VOZ"));
-//
-//        DateFormat dateFormat = new SimpleDateFormat("d MMM");
-//        DateFormat timeFormat = new SimpleDateFormat("H:mm");
-//        DateFormat diff = new SimpleDateFormat("H час");
-//
-//        holder.titleTV.setText(flight.getDepCity().getCityName() + " - " + flight.getArrivalCity().getCityName());
-//        holder.priceTV.setText(flight.getEconomyPrice().toString() + "₽");
-//        holder.depDateTV.setText(dateFormat.format(flight.getDepartureDate()));
-//        holder.fromTimeTV.setText(timeFormat.format(flight.getDepartureDate()));
-//        holder.toTimeTV.setText(timeFormat.format(flight.getArrivalDate()));
-//        holder.fromCodeTV.setText(flight.getDepCity().getCityCode());
-//        holder.toCodeTV.setText(flight.getArrivalCity().getCityCode());
-//
-//        holder.durationTV.setText(diff.format(new Date(flight.getDepartureDate().getTime() - flight.getArrivalDate().getTime())));
+        DateFormat dateFormat = new SimpleDateFormat("d MMM");
+        DateFormat timeFormat = new SimpleDateFormat("H:mm");
+        DateFormat diff = new SimpleDateFormat("H час");
 
-        Fragment target = FlightInfoFragment.getInstance(flight.getFlightId());
+        holder.titleTV.setText(flight.getOriginPlace().getPlaceName() + " - " + flight.getDestinationPlace().getPlaceName());
+        holder.priceTV.setText(flight.getCost().toString() + "₽");
+        holder.depDateTV.setText(dateFormat.format(flight.getOutboundDate()));
+        holder.fromTimeTV.setText(timeFormat.format(flight.getOutboundDate()));
+        holder.toTimeTV.setText(timeFormat.format(flight.getInboundDate()));
+        holder.fromCodeTV.setText(flight.getOriginPlace().getPlaceId());
+        holder.toCodeTV.setText(flight.getDestinationPlace().getPlaceId());
+
+        holder.durationTV.setText(diff.format(new Date(flight.getOutboundDate().getTime() - flight.getInboundDate().getTime())));
+
+        Fragment target = FlightInfoFragment.getInstance(1L);
         holder.itemView.setOnClickListener(v -> {CommonUtils.goToFragment(fragment.getParentFragmentManager(),
                 R.id.nav_host_fragment, target);
                 YandexMetrica.reportEvent(target.getString(R.string.event_user_selected_flight_using_search));
@@ -95,7 +91,7 @@ public class FlightsRecycleViewAdapter extends RecyclerView.Adapter<FlightsRecyc
     private static final DiffUtil.ItemCallback<Flight> DIFF_CALLBACK = new DiffUtil.ItemCallback<Flight>() {
         @Override
         public boolean areItemsTheSame(@NonNull Flight oldProduct, @NonNull Flight newProduct) {
-            return oldProduct.getFlightId().equals(newProduct.getFlightId());
+            return true; //oldProduct.getFlightId().equals(newProduct.getFlightId());
         }
 
         @SuppressLint("DiffUtilEquals")

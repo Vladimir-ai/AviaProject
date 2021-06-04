@@ -7,7 +7,7 @@ import androidx.annotation.RequiresApi;
 import com.example.aviaapplication.api.models.City;
 import com.example.aviaapplication.api.models.Flight;
 import com.example.aviaapplication.api.models.Passenger;
-import com.example.aviaapplication.api.models.RecentFlight;
+import com.example.aviaapplication.api.models.RecentCity;
 import com.example.aviaapplication.api.models.User;
 
 import java.text.DateFormat;
@@ -26,9 +26,9 @@ public class Api {
 
     private List<Flight> flights;
     private Map<Long, List<Flight>> favoriteFlights;
-    private List<RecentFlight> recentFlights;
+    private List<RecentCity> recentCities;
     private Map<Long, Set<Flight>> recentViewed;
-    private Map<Long, Set<City>> recentCities;
+   // private Map<Long, Set<City>> recentCities;
     private List<Passenger> passengers;
     private List<User> users;
     private List<City> cities;
@@ -62,11 +62,11 @@ public class Api {
 
         users = new ArrayList<>();
 
-        users.add(new User(1L, "Владимир Беспалов", null));
+        //users.add(new User(1L, "Владимир Беспалов", null));
 
         passengers = new ArrayList<>();
-        recentCities = new TreeMap<>();
-        recentFlights = new ArrayList<>();
+        //recentCities = new TreeMap<>();
+        recentCities = new ArrayList<>();
         favoriteFlights = new TreeMap<>();
         recentViewed = new TreeMap<>();
 
@@ -74,30 +74,25 @@ public class Api {
 
         DateFormat format = new SimpleDateFormat("MM dd, yyyy HH:mm:ss");
 
-        try {
-            flights.addAll(Arrays.asList(
-                    new Flight(1L, format.parse("05 08, 2021 07:00:00"), format.parse("05 08, 2021 08:10:00"), "Домодедово", "Чертовицкое", "DME", "VOZ", 5948, 4198),
-                    new Flight(2L, format.parse("05 08, 2021 17:20:00"), format.parse("05 08, 2021 18:30:00"), "Домодедово", "Чертовицкое", "DME", "VOZ", 8698, 6448),
-                    new Flight(3L, format.parse("05 01, 2021 10:10:00"), format.parse("05 01, 2021 11:30:00"),  "Чертовицкое","Домодедово",  "VOZ","DME", 7921, 5892)
-            ));
-            for (int i = 0; i < 2; i++) {
-                flights.get(i).setArrivalCity(cities.get(1));
-                flights.get(i).setDepCity(cities.get(0));
-            }
+//            flights.addAll(Arrays.asList(
+//                    new Flight(1L, format.parse("05 08, 2021 07:00:00"), format.parse("05 08, 2021 08:10:00"), "Домодедово", "Чертовицкое", "DME", "VOZ", 5948, 4198),
+//                    new Flight(2L, format.parse("05 08, 2021 17:20:00"), format.parse("05 08, 2021 18:30:00"), "Домодедово", "Чертовицкое", "DME", "VOZ", 8698, 6448),
+//                    new Flight(3L, format.parse("05 01, 2021 10:10:00"), format.parse("05 01, 2021 11:30:00"),  "Чертовицкое","Домодедово",  "VOZ","DME", 7921, 5892)
+//            ));
+//            for (int i = 0; i < 2; i++) {
+//                flights.get(i).setArrivalCity(cities.get(1));
+//                flights.get(i).setDepCity(cities.get(0));
+//            }
 
 
-            recentFlights.add(new RecentFlight(1L, 1L, flights.get(2), 2));
+            //recentCities.add(new RecentCity(1L, 1L, flights.get(2), 2));
 
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public Flight getFlightById(Long id){
-        Flight res = flights.stream().filter(elem -> elem.getFlightId().equals(id)).findFirst().get();
-        return res;
+//        Flight res = flights.stream().filter(elem -> elem.getFlightId().equals(id)).findFirst().get();
+        return new Flight();
     }
 
     public List<Flight> getAllFlights(){
@@ -121,15 +116,15 @@ public class Api {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public List<RecentFlight> getRecentFlights(){
-        List<RecentFlight> res = recentFlights.stream().filter(item -> item.getUserId().equals(1L)).collect(Collectors.toList());
-        return isLoggedIn ?  res : new ArrayList<>();
+    public List<RecentCity> getRecentFlights(){
+        //List<RecentCity> res = recentCities.stream().filter(item -> item.getUserId().equals(1L)).collect(Collectors.toList());
+        return new ArrayList<>();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean isFavorite(Long userId, Long flightId){
-        if (favoriteFlights.containsKey(userId))
-            return favoriteFlights.get(userId).stream().anyMatch(item -> item.getFlightId().equals(flightId));
+        //if (favoriteFlights.containsKey(userId))
+            //return favoriteFlights.get(userId).stream().anyMatch(item -> item.getFlightId().equals(flightId));
         return false;
     }
 
@@ -167,12 +162,12 @@ public class Api {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public List<Flight> find(Long from, Long to, Long fromCity, Long toCity){
-        List<Flight> res = flights.stream().filter(item ->
-                item.getDepartureDate().getTime() >= from &&
-                        item.getDepartureDate().getTime() <= to &&
-                        item.getDepCity().getPlaceId().equals(fromCity) &&
-                        item.getArrivalCity().getPlaceId().equals(toCity)).collect(Collectors.toList());
-        return res;
+//        List<Flight> res = flights.stream().filter(item ->
+//                item.getDepartureDate().getTime() >= from &&
+//                        item.getDepartureDate().getTime() <= to &&
+//                        item.getDepCity().getPlaceId().equals(fromCity) &&
+//                        item.getArrivalCity().getPlaceId().equals(toCity)).collect(Collectors.toList());
+        return new ArrayList<>();
     }
 
     public List<City> getAllCities(){
@@ -180,17 +175,17 @@ public class Api {
     }
 
     public List<City> getRecentCities(Long userId){
-        if (recentCities.containsKey(userId))
-            return new ArrayList<>(recentCities.get(userId));
+//        if (recentCities.containsKey(userId))
+//            return new ArrayList<>(recentCities.get(userId));
 
         return new ArrayList<>();
     }
 
     public void addRecentCity(Long userId, City city){
-        if(recentCities.containsKey(userId))
-            recentCities.get(userId).add(city);
-        else
-            recentCities.put(userId, new HashSet<>(Arrays.asList(city)));
+//        if(recentCities.containsKey(userId))
+//            recentCities.get(userId).add(city);
+//        else
+//            recentCities.put(userId, new HashSet<>(Arrays.asList(city)));
     }
 }
 

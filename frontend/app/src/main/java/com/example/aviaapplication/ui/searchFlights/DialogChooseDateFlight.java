@@ -60,6 +60,7 @@ public class DialogChooseDateFlight extends DialogFragment {
             add(Calendar.SATURDAY);
             add(Calendar.SUNDAY);
         }});
+
         calendarView.setShowDaysOfWeekTitle(false);
         calendarView.setShowDaysOfWeek(true);
         calendarView.setWeekendDayTextColor(Color.parseColor("#4A51F0"));

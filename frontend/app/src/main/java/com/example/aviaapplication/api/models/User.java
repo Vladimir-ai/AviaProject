@@ -1,44 +1,16 @@
 package com.example.aviaapplication.api.models;
 
-import java.net.URL;
+import android.net.Uri;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
-    private Long id;
-
     private String name;
-    private URL imageURL;
-
-    public User(String name){
-        this.name = name;
-    }
-
-    public User(Long id, String name, URL imageURL) {
-        this.id = id;
-        this.name = name;
-        this.imageURL = imageURL;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public URL getImageURL() {
-        return imageURL;
-    }
-
-    public void setImageURL(URL imageURL) {
-        this.imageURL = imageURL;
-    }
+    private String email;
+    private Uri imageUri;
 }

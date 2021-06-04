@@ -1,33 +1,33 @@
 package com.example.aviaapplication.ui.home;
 
-import com.example.aviaapplication.api.Api;
+import android.content.Context;
+
 import com.example.aviaapplication.api.models.User;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class UserRepository {
-    private static UserRepository userRepository;
-    private Api api;
 
+    private static UserRepository userRepository;
 
     public static UserRepository getInstance(){
-        if(userRepository == null)
-            userRepository = new UserRepository(Api.getInstance());
-        return userRepository;
+        if (userRepository == null)
+            userRepository = new UserRepository();
+            return userRepository;
     }
 
-    public UserRepository(Api api) {
-        this.api = api;
+    public User getCurrentUser(Context context){
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+
+        if (account == null)
+            return null;
+        return new User(account.getDisplayName(), account.getEmail(), account.getPhotoUrl());
     }
 
-    public User loginUser(String name){
-        api.login();
-        return new User(name);
-    }
 
-    public void logoutUser(){
-        api.logout();
-    }
 
-    public boolean isLoggedIn(){
-        return api.isLoggedIn();
-    }
+
 }

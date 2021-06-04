@@ -19,6 +19,7 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -31,16 +32,24 @@ import com.example.aviaapplication.api.models.Flight;
 import com.example.aviaapplication.ui.cities.FragmentCitiesSearch;
 import com.example.aviaapplication.ui.foundFlights.FoundFlights;
 import com.example.aviaapplication.utils.CommonUtils;
+import com.example.aviaapplication.utils.Resource;
 import com.yandex.metrica.YandexMetrica;
 import com.yandex.metrica.impl.ob.Ya;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.observers.DisposableObserver;
 
 
 public class SearchFlightsFragment extends Fragment {
@@ -76,19 +85,22 @@ public class SearchFlightsFragment extends Fragment {
         if (startDate != null) {
             setNewDate(startDate, lastDate);
         }
+
         if (fromCity != null) {
             setCityFrom(fromCity);
         }
+
         if (toCity != null) {
             setCityTo(toCity);
         }
+
         if (countOfPersons != null) {
             countTV.setText(Integer.toString(countOfPersons));
         }
     }
 
     private void initViews(View rootView) {
-        searchFlightViewModel = ViewModelProviders.of(this).get(SearchFlightViewModel.class);
+        searchFlightViewModel = ViewModelProviders.of(requireActivity()).get(SearchFlightViewModel.class);
 
         progressBar = rootView.findViewById(R.id.search_flights_pb);
         swapCities = rootView.findViewById(R.id.fragment_search_flights_swap_iv);
@@ -96,17 +108,19 @@ public class SearchFlightsFragment extends Fragment {
         chooseDateFlights = rootView.findViewById(R.id.choose_data);
         minusIV = rootView.findViewById(R.id.search_flights_count_of_people_minus_iv);
         plusIV = rootView.findViewById(R.id.search_flights_count_of_people_plus_iv);
+
         countTV = rootView.findViewById(R.id.search_flights_count_of_people_count_tv);
         dateTV = rootView.findViewById(R.id.search_flights_date_tv);
         cityFromTV = rootView.findViewById(R.id.fragment_search_flights_city_from_tv);
         cityToTV = rootView.findViewById(R.id.fragment_search_flights_city_to_tv);
+
         searchFlightBtn = rootView.findViewById(R.id.search_flights_btn);
         dialogChooseDateFlight = new DialogChooseDateFlight();
         dialogChooseDateFlight.setStyle(DialogFragment.STYLE_NO_FRAME, 0);
         recyclerView = rootView.findViewById(R.id.search_flights_rv);
         recentFlightsViewAdapter = new RecentFlightsViewAdapter(this);
         recyclerView.setAdapter(recentFlightsViewAdapter);
-        //getRecentFlights();
+        getRecentFlights();
     }
 
 
@@ -120,6 +134,7 @@ public class SearchFlightsFragment extends Fragment {
                 countTV.setText(Integer.toString(currState - 1));
             }
         });
+
         plusIV.setOnClickListener(v -> {
             int currState = Integer.parseInt(countTV.getText().toString());
             if (currState < 10) {
@@ -137,6 +152,7 @@ public class SearchFlightsFragment extends Fragment {
                     .addToBackStack(SearchFlightsFragment.class.toString())
                     .commit();
         });
+
         cityToTV.setOnClickListener(v -> {
             Fragment f = new FragmentCitiesSearch();
             f.setTargetFragment(this, 1);
@@ -146,25 +162,29 @@ public class SearchFlightsFragment extends Fragment {
                     .addToBackStack(SearchFlightsFragment.class.toString())
                     .commit();
         });
+
         chooseDateFlights.setOnClickListener(v -> {
             if (!dialogChooseDateFlight.isVisible()) {
                 dialogChooseDateFlight.show(getChildFragmentManager(), "");
             }
         });
-        searchFlightBtn.setOnClickListener(v -> {
 
+        searchFlightBtn.setOnClickListener(v -> {
             if (startDate == null || lastDate == null) {
                 CommonUtils.makeErrorToast(getContext(), "Укажите дату полета");
                 return;
             }
+
             if (fromCity == null) {
                 CommonUtils.makeErrorToast(getContext(), "Укажите пункт отправления");
                 return;
             }
+
             if (toCity == null) {
                 CommonUtils.makeErrorToast(getContext(), "Укажите пункт назначения");
                 return;
             }
+
 //            Date startDate = SearchFlightsFragment.startDate.getTime();
 //            Date lastDate = new Date(SearchFlightsFragment.lastDate.getTime().getTime() + TimeUnit.DAYS.toMillis(1));
 
@@ -181,7 +201,6 @@ public class SearchFlightsFragment extends Fragment {
             setCityTo(fromCityCopy);
         });
 
-
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -191,10 +210,11 @@ public class SearchFlightsFragment extends Fragment {
         });
     }
 
-
     public void setCityFrom(City cityFrom) {
         fromCity = cityFrom;
+
         if (cityFrom != null) {
+            searchFlightViewModel.getDepartureCity().postValue(cityFrom);
             cityFromTV.setText(cityFrom.getPlaceName());
 
             Map<String, Object> result = new HashMap<>();
@@ -208,6 +228,7 @@ public class SearchFlightsFragment extends Fragment {
     public void setCityTo(City cityTo) {
         toCity = cityTo;
         if (cityTo != null) {
+            searchFlightViewModel.getArrivalCity().postValue(cityTo);
             cityToTV.setText(cityTo.getPlaceName());
 
             Map<String, Object> result = new HashMap<>();
@@ -225,6 +246,10 @@ public class SearchFlightsFragment extends Fragment {
         if (startDate != null && lastDate != null) {
             this.startDate = initDate(startDate);
             this.lastDate = initDate(lastDate);
+
+            searchFlightViewModel.getOutboundDate().postValue(startDate.getTime());
+            searchFlightViewModel.getInboundDate().postValue(lastDate.getTime());
+
             Map<String, Object> result = new HashMap<>();
             if (startDate.equals(lastDate)) {
                 dateTV.setText(format.format(startDate.getTime()));
@@ -248,18 +273,18 @@ public class SearchFlightsFragment extends Fragment {
     }
 
     void getRecentFlights() {
-
-        searchFlightViewModel.getRecentFlights()
+        searchFlightViewModel.getRecentFlightsLiveData()
                 .observe(getViewLifecycleOwner(), model -> {
-                    if (model == null) {
+                    if (model.getStatus() == Resource.Status.ERROR) {
                         Toast.makeText(getContext(), "Ошибка получения данных", Toast.LENGTH_SHORT).show();
                     } else {
-                        recentFlightsViewAdapter.submitList(model);
+                        recentFlightsViewAdapter.submitList(model.getData());
                     }
                 });
     }
 
     void findFlights() {
+        searchFlightViewModel.getIsLoading().setValue(true);
 
         searchFlightViewModel.getIsLoading().observe(this.getViewLifecycleOwner(), isLoading -> {
             if (isLoading) progressBar.setVisibility(View.VISIBLE);
@@ -272,19 +297,50 @@ public class SearchFlightsFragment extends Fragment {
         result.put("departure_date", dateTV.getText());
         YandexMetrica.reportEvent(getString(R.string.event_user_perform_search), result);
 
-        searchFlightViewModel.findFlights()
-                .observe(this.getViewLifecycleOwner(), model -> {
-                    searchFlightViewModel.getIsLoading().postValue(false);
-                    if (model == null) {
-                        Toast.makeText(getContext(), "Ошибка получения данных", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Fragment f = FoundFlights.getInstance(model);
-                        getParentFragmentManager().beginTransaction()
-                                .replace(containerId, f)
-                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                                .addToBackStack(SearchFlightsFragment.class.toString())
-                                .commit();
-                    }
-                });
+        searchFlightViewModel.getFlightsLiveData().setValue(null);
+
+        List<Flight> flightList = new LinkedList<>();
+
+        searchFlightViewModel.findFlights().observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Flight>>() {
+            @Override
+            public void onNext(@NonNull List<Flight> flights) {
+                if (!flights.isEmpty())
+                    flightList.addAll(flights);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                CommonUtils.makeErrorToast(getContext(), e.getLocalizedMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                searchFlightViewModel.getIsLoading().setValue(false);
+                searchFlightViewModel.getFlightsLiveData().postValue(flightList);
+
+                Fragment f = new FoundFlights();
+                getParentFragmentManager().beginTransaction()
+                        .replace(containerId, f)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .addToBackStack(SearchFlightsFragment.class.toString())
+                        .commit();
+            }
+        });
+
+        //        searchFlightViewModel.getFlightsLiveData()
+//                .observe(this.getViewLifecycleOwner(), model -> {
+//                    if (model == null) {
+//                        Toast.makeText(getContext(), "Ошибка получения данных", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        searchFlightViewModel.getIsLoading().postValue(false);
+//
+//                        Fragment f = new FoundFlights();
+//                        getParentFragmentManager().beginTransaction()
+//                                .replace(containerId, f)
+//                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+//                                .addToBackStack(SearchFlightsFragment.class.toString())
+//                                .commit();
+//                    }
+//                });
     }
 }

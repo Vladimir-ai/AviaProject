@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.aviaapplication.R;
 import com.example.aviaapplication.api.models.Flight;
+import com.example.aviaapplication.api.models.RecentFlight;
 import com.example.aviaapplication.ui.flightInfo.FlightInfoFragment;
 import com.example.aviaapplication.ui.searchFlights.SearchFlightsFragment;
 import com.example.aviaapplication.utils.CommonUtils;
@@ -45,36 +46,36 @@ public class RecentFlightsViewAdapter extends RecyclerView.Adapter<RecentFlights
 
     @Override
     public void onBindViewHolder(@NonNull RecentFlightsViewAdapter.FlightsViewHolder holder, int position) {
-        Flight flight = differ.getCurrentList().get(position);
-        Fragment frag = FlightInfoFragment.getInstance(flight.getFlightId());
+        RecentFlight flight = differ.getCurrentList().get(position);
+        //Fragment frag = FlightInfoFragment.getInstance(flight.getFlight());
 
         TextView dateTV = holder.itemView.findViewById(R.id.date_tv);
         TextView destTV = holder.itemView.findViewById(R.id.destinations_tv);
 
-        destTV.setText(flight.getDepCity().getPlaceName() + " - " + flight.getArrivalCity().getPlaceName());
+        destTV.setText(flight.getFlight().getOriginPlace().getPlaceName() + " - " + flight.getFlight().getDestinationPlace().getPlaceName());
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.YYYY");
-        dateTV.setText(dateFormat.format(flight.getDepartureDate()));
+        dateTV.setText(dateFormat.format(flight.getFlight().getOutboundDate()));
 
-        holder.itemView.setOnClickListener(v -> CommonUtils.goToFragment(fragment.getParentFragmentManager(),
-                R.id.nav_host_fragment, frag));
+//        holder.itemView.setOnClickListener(v -> CommonUtils.goToFragment(fragment.getParentFragmentManager(),
+//                R.id.nav_host_fragment, frag));
     }
 
-    private AsyncListDiffer<Flight> differ = new AsyncListDiffer<>(this, DIFF_CALLBACK);
+    private AsyncListDiffer<RecentFlight> differ = new AsyncListDiffer<>(this, DIFF_CALLBACK);
 
-    private static final DiffUtil.ItemCallback<Flight> DIFF_CALLBACK = new DiffUtil.ItemCallback<Flight>() {
+    private static final DiffUtil.ItemCallback<RecentFlight> DIFF_CALLBACK = new DiffUtil.ItemCallback<RecentFlight>() {
         @Override
-        public boolean areItemsTheSame(@NonNull Flight oldProduct, @NonNull Flight newProduct) {
-            return oldProduct.getFlightId().equals(newProduct.getFlightId());
+        public boolean areItemsTheSame(@NonNull RecentFlight oldProduct, @NonNull RecentFlight newProduct) {
+            return true;// oldProduct.getFlightId().equals(newProduct.getFlightId());
         }
 
         @SuppressLint("DiffUtilEquals")
         @Override
-        public boolean areContentsTheSame(@NonNull Flight oldProduct, @NonNull Flight newProduct) {
+        public boolean areContentsTheSame(@NonNull RecentFlight oldProduct, @NonNull RecentFlight newProduct) {
             return oldProduct.equals(newProduct);
         }
     };
 
-    public void submitList(List<Flight> products) {
+    public void submitList(List<RecentFlight> products) {
         differ.submitList(products);
     }
 

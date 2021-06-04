@@ -17,6 +17,8 @@ import com.example.aviaapplication.R;
 import com.example.aviaapplication.additions.recyclerView.CitiesRecycleViewAdapter;
 import com.example.aviaapplication.api.models.City;
 import com.example.aviaapplication.ui.searchFlights.SearchFlightsFragment;
+import com.example.aviaapplication.utils.CommonUtils;
+import com.example.aviaapplication.utils.Resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,8 +27,10 @@ import java.util.List;
 public class FragmentCitiesSearch extends Fragment {
     private RecyclerView recyclerViewRecentCities;
     private RecyclerView recyclerViewAllCities;
+
     private CitiesRecycleViewAdapter recycleViewAdapterRecentCities;
     private CitiesRecycleViewAdapter recycleViewAdapterAllCities;
+
     Integer containerId;
     SearchView simpleSearchView;
 
@@ -38,12 +42,17 @@ public class FragmentCitiesSearch extends Fragment {
         initViews(view);
         setListeners();
         containerId = container.getId();
+
+        citiesViewModel.getRecentCities();
+
         return view;
     }
 
     public void sendChosenData(City city) {
         SearchFlightsFragment f = (SearchFlightsFragment) getTargetFragment();
-        citiesViewModel.addRecentCity(city);
+
+        if (!citiesViewModel.getRecentCityLiveData().getValue().getData().contains(city))
+            citiesViewModel.addRecentCity(city);
 
         if (getTag().equals("from")) {
             f.setCityFrom(city);
@@ -59,9 +68,25 @@ public class FragmentCitiesSearch extends Fragment {
 
     private void setListeners() {
         citiesViewModel.getCityListLiveData().observe(getViewLifecycleOwner(), cities -> {
-            if(cities!= null){
-                recycleViewAdapterAllCities.submitList(cities);
-            }
+            if (cities == null)
+                return;
+
+            if (cities.getStatus() == Resource.Status.SUCCESS && cities.getData() != null)
+                recycleViewAdapterAllCities.submitList(cities.getData());
+
+            if (cities.getStatus() == Resource.Status.ERROR)
+                CommonUtils.makeErrorToast(getContext(), cities.getMessage());
+        });
+
+        citiesViewModel.getRecentCityLiveData().observe(getViewLifecycleOwner(), cities -> {
+            if (cities == null)
+                return;
+
+            if (cities.getStatus() == Resource.Status.SUCCESS && cities.getData() != null)
+                recycleViewAdapterRecentCities.submitList(cities.getData());
+
+            if (cities.getStatus() == Resource.Status.ERROR)
+                CommonUtils.makeErrorToast(getContext(), cities.getMessage());
         });
 
         simpleSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -88,15 +113,5 @@ public class FragmentCitiesSearch extends Fragment {
         recyclerViewAllCities = view.findViewById(R.id.fragment_cities_all_cities_rv);
         recyclerViewRecentCities.setAdapter(recycleViewAdapterRecentCities);
         recyclerViewAllCities.setAdapter(recycleViewAdapterAllCities);
-        updateList(citiesViewModel.getAllCities());
-    }
-
-    public void getRecentCites() {
-        //метод из ViewModel
-    }
-
-    public void updateList(List<City> list) {
-        recycleViewAdapterAllCities.submitList(list);
-        recycleViewAdapterRecentCities.submitList(citiesViewModel.getRecentCities());
     }
 }

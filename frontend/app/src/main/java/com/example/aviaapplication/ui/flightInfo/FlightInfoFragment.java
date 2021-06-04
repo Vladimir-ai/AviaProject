@@ -102,26 +102,26 @@ public class FlightInfoFragment extends Fragment {
         favCheckbox.setChecked(flightInfoViewModel.isFavorite());
 
         Flight fl = flightInfoViewModel.getFlight().getValue();
-        costTV.setText(fl.getEconomyPrice().toString());
+//        costTV.setText(fl.getEconomyPrice().toString());
+//
+//        DateFormat time = new SimpleDateFormat("HH:mm");
+//        DateFormat date = new SimpleDateFormat("dd MMMM, E", new Locale("ru"));
+//
+//        depTimeTV.setText(time.format(fl.getDepartureDate()));
+//        depDateTV.setText(date.format(fl.getDepartureDate()));
+//        depCityTV.setText(fl.getDepCity().getPlaceName());
+//        depAirportTV.setText(fl.getDepCity().getPlaceName());
+//
+//        landTimeTV.setText(time.format(fl.getArrivalDate()));
+//        landDateTV.setText(date.format(fl.getArrivalDate()));
+//        landCityTV.setText(fl.getArrivalCity().getPlaceName());
+//        landAirportTV.setText(fl.getArrivalCity().getPlaceName());
+//
+//        buttonBuy.setText("Купить за " + fl.getEconomyPrice().toString() + "₽");
+//
+//        Date substr = new Date(fl.getDepartureDate().getTime() - fl.getArrivalDate().getTime());
 
-        DateFormat time = new SimpleDateFormat("HH:mm");
-        DateFormat date = new SimpleDateFormat("dd MMMM, E", new Locale("ru"));
-
-        depTimeTV.setText(time.format(fl.getDepartureDate()));
-        depDateTV.setText(date.format(fl.getDepartureDate()));
-        depCityTV.setText(fl.getDepCity().getPlaceName());
-        depAirportTV.setText(fl.getDepCity().getPlaceName());
-
-        landTimeTV.setText(time.format(fl.getArrivalDate()));
-        landDateTV.setText(date.format(fl.getArrivalDate()));
-        landCityTV.setText(fl.getArrivalCity().getPlaceName());
-        landAirportTV.setText(fl.getArrivalCity().getPlaceName());
-
-        buttonBuy.setText("Купить за " + fl.getEconomyPrice().toString() + "₽");
-
-        Date substr = new Date(fl.getDepartureDate().getTime() - fl.getArrivalDate().getTime());
-
-        flightTimeDurationTV.setText(time.format(substr));
+//        flightTimeDurationTV.setText(time.format(substr));
 
         if(flightInfoViewModel.isLoggedIn())
             flightInfoViewModel.addToRecentViewed();
@@ -144,14 +144,14 @@ public class FlightInfoFragment extends Fragment {
 
         buttonBusiness.setOnClickListener(v -> {
             Flight fl = flightInfoViewModel.getFlight().getValue();
-            costTV.setText(fl.getBusinessPrice().toString());
-            buttonBuy.setText("Купить за " + fl.getBusinessPrice().toString() + "₽");
+//            costTV.setText(fl.getBusinessPrice().toString());
+//            buttonBuy.setText("Купить за " + fl.getBusinessPrice().toString() + "₽");
         });
 
         buttonEconomy.setOnClickListener(v -> {
             Flight fl = flightInfoViewModel.getFlight().getValue();
-            costTV.setText(fl.getEconomyPrice().toString());
-            buttonBuy.setText("Купить за " + fl.getEconomyPrice().toString() + "₽");
+//            costTV.setText(fl.getEconomyPrice().toString());
+//            buttonBuy.setText("Купить за " + fl.getEconomyPrice().toString() + "₽");
         });
 
         buttonBuy.setOnClickListener(v -> {

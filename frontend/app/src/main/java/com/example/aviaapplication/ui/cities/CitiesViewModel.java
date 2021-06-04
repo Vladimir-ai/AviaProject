@@ -5,37 +5,52 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.aviaapplication.api.models.City;
+import com.example.aviaapplication.api.models.User;
+import com.example.aviaapplication.ui.home.LoginViewModel;
+import com.example.aviaapplication.ui.home.UserRepository;
+import com.example.aviaapplication.utils.Resource;
 
 import java.util.List;
 
 public class CitiesViewModel extends AndroidViewModel {
 
     private CitiesRepository citiesRepository;
-    private LiveData<List<City>> cityListLiveData;
+    private UserRepository userRepository;
+
+    private final MutableLiveData<Resource<List<City>>> cityListLiveData;
+    private final MutableLiveData<Resource<List<City>>> recentCityLiveData;
 
     public CitiesViewModel(@NonNull Application application) {
         super(application);
         citiesRepository = CitiesRepository.getInstance();
-        cityListLiveData = citiesRepository.getCityListLiveData();
+        userRepository = UserRepository.getInstance();
+
+        cityListLiveData = new MutableLiveData<>();
+        recentCityLiveData = new MutableLiveData<>();
+        getRecentCities();
     }
 
     public void findByString(String query){
-        citiesRepository.findByString(query);
+        citiesRepository.findByString(query, cityListLiveData);
     }
 
-    public LiveData<List<City>> getCityListLiveData(){ return cityListLiveData; }
+    public LiveData<Resource<List<City>>> getCityListLiveData(){ return cityListLiveData; }
 
-    public List<City> getAllCities(){
-        return citiesRepository.getAllCities();
-    }
+    public LiveData<Resource<List<City>>> getRecentCityLiveData(){ return recentCityLiveData; }
 
     public void addRecentCity(City city){
-        citiesRepository.addCityToRecent(1L, city);
+        User currentUser = userRepository.getCurrentUser(getApplication().getApplicationContext());
+        if (currentUser != null)
+            citiesRepository.addCityToRecent(currentUser.getEmail(), city);
     }
 
-    public List<City> getRecentCities(){
-        return citiesRepository.getRecentCities(1L);
+    public void getRecentCities(){
+        User currentUser = userRepository.getCurrentUser(getApplication().getApplicationContext());
+        if (currentUser != null)
+            citiesRepository.getRecentCities(currentUser.getEmail(), recentCityLiveData);
     }
 }

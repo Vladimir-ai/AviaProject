@@ -5,11 +5,8 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.example.aviaapplication.api.Api;
-import com.example.aviaapplication.api.models.Flight;
-import com.example.aviaapplication.api.models.RecentFlight;
+import com.example.aviaapplication.api.models.RecentCity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FlightHistoryRepository {
@@ -29,7 +26,7 @@ public class FlightHistoryRepository {
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public List<RecentFlight> getFlights(){
+    public List<RecentCity> getFlights(){
         return api.getRecentFlights();
 //        return Arrays.asList(new Flight("123", "456", 100f, "2222222"), new Flight("456", "123", 200f, "1000"));
     }

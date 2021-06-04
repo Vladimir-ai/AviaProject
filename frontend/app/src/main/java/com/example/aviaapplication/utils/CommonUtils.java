@@ -14,10 +14,13 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.aviaapplication.R;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import lombok.val;
 
 public class CommonUtils {
     public static OnBackPressedCallback getOnBackPressedCallback(FragmentManager fragmentManager) {
@@ -62,6 +65,26 @@ public class CommonUtils {
     public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));
+    }
+
+    public static String cipherEmail(String email){
+        try {
+            val digest = java.security.MessageDigest.getInstance("MD5");
+            digest.update(email.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            StringBuilder hexStr = new StringBuilder();
+            for (byte aMessageDigest : messageDigest){
+                String h = Integer.toHexString(0xFF & aMessageDigest);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexStr.append(h);
+            }
+            return hexStr.toString();
+        }catch (NoSuchAlgorithmException e){
+        }
+        return "";
+
     }
 
 }
