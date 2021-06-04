@@ -49,7 +49,6 @@ public class CommonUtils {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     public static void makeErrorToast(Context context, String text) {
         Toast toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {

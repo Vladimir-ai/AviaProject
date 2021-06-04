@@ -31,7 +31,7 @@ public class SearchFlightViewModel extends ViewModel {
     private final MutableLiveData<Date> outboundDate = new MutableLiveData<>();
 
     private final MutableLiveData<Resource<List<RecentFlight>>> recentFlightListData = new MutableLiveData<>();
-    private final MutableLiveData<List<Flight>> flightListData = new MutableLiveData<>();
+    private final MutableLiveData<  List<Flight>> flightListData = new MutableLiveData<>();
 
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
