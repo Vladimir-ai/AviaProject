@@ -3,6 +3,7 @@ package com.example.aviaapplication.ui.home;
 import android.content.Context;
 
 import com.example.aviaapplication.api.models.User;
+import com.example.aviaapplication.utils.CommonUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
@@ -24,7 +25,7 @@ public class UserRepository {
 
         if (account == null)
             return null;
-        return new User(account.getDisplayName(), account.getEmail(), account.getPhotoUrl());
+        return new User(account.getDisplayName(), CommonUtils.cipherEmail(account.getEmail()), account.getPhotoUrl());
     }
 
 

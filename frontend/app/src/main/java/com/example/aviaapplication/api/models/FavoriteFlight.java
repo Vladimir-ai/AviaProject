@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FavoriteFlight implements Serializable {
+    private Integer id;
     private String userId;
     private Flight flight;
 }

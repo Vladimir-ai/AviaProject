@@ -1,23 +1,24 @@
 package com.example.aviaapplication.ui.searchFlights;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.aviaapplication.api.models.Flight;
 import com.example.aviaapplication.api.models.RecentFlight;
 import com.example.aviaapplication.api.services.RetrofitConnection;
 import com.example.aviaapplication.api.services.flights.FlightApi;
-import com.example.aviaapplication.utils.CommonUtils;
 import com.example.aviaapplication.utils.Resource;
-import com.yandex.metrica.impl.ob.Re;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.core.Observable;
-import kotlin.jvm.functions.FunctionN;
-import lombok.val;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,20 +42,24 @@ public class SearchFlightsRepository {
     }
 
     public void getRecentFlights(String userId, MutableLiveData<Resource<List<RecentFlight>>> liveData) {
-        val user = CommonUtils.cipherEmail(userId);
 
-        flightApi.getRecentFlights(user).enqueue(new Callback<List<RecentFlight>>() {
+        flightApi.getRecentFlights(userId).enqueue(new Callback<List<RecentFlight>>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
-            public void onResponse(Call<List<RecentFlight>> call, Response<List<RecentFlight>> response) {
+            public void onResponse(@NotNull Call<List<RecentFlight>> call, @NotNull Response<List<RecentFlight>> response) {
                 if (response.isSuccessful()) {
-                    liveData.postValue(Resource.success(response.body()));
+                    assert response.body() != null;
+                    liveData.postValue(Resource.success(response.body()
+                            .stream().filter(flight ->
+                                flight.getFlight().getOutboundDate().after(Calendar.getInstance().getTime())
+                            ).collect(Collectors.toList())));
                 } else {
                     liveData.postValue(Resource.error(response.message(), null));
                 }
             }
 
             @Override
-            public void onFailure(Call<List<RecentFlight>> call, Throwable t) {
+            public void onFailure(@NotNull Call<List<RecentFlight>> call, @NotNull Throwable t) {
                 liveData.postValue(Resource.error(t.getMessage(), null));
             }
         });
@@ -81,14 +86,14 @@ public class SearchFlightsRepository {
     }
 
     public void addToRecent(String userId, Flight flight) {
-        String email = CommonUtils.cipherEmail(userId);
-        flightApi.addToRecent(new RecentFlight(email, flight)).enqueue(new Callback<ResponseBody>() {
+        flightApi.addToRecent(new RecentFlight(userId, flight)).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
+                //silent mode
             }
         });
     }

@@ -19,10 +19,13 @@ import com.example.aviaapplication.api.models.RecentFlight;
 import com.example.aviaapplication.ui.flightInfo.FlightInfoFragment;
 import com.example.aviaapplication.ui.searchFlights.SearchFlightsFragment;
 import com.example.aviaapplication.utils.CommonUtils;
+import com.yandex.metrica.YandexMetrica;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import lombok.val;
 
 public class RecentFlightsViewAdapter extends RecyclerView.Adapter<RecentFlightsViewAdapter.FlightsViewHolder> {
     public static class FlightsViewHolder extends RecyclerView.ViewHolder {
@@ -47,7 +50,6 @@ public class RecentFlightsViewAdapter extends RecyclerView.Adapter<RecentFlights
     @Override
     public void onBindViewHolder(@NonNull RecentFlightsViewAdapter.FlightsViewHolder holder, int position) {
         RecentFlight flight = differ.getCurrentList().get(position);
-        //Fragment frag = FlightInfoFragment.getInstance(flight.getFlight());
 
         TextView dateTV = holder.itemView.findViewById(R.id.date_tv);
         TextView destTV = holder.itemView.findViewById(R.id.destinations_tv);
@@ -55,6 +57,16 @@ public class RecentFlightsViewAdapter extends RecyclerView.Adapter<RecentFlights
         destTV.setText(flight.getFlight().getOriginPlace().getPlaceName() + " - " + flight.getFlight().getDestinationPlace().getPlaceName());
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.YYYY");
         dateTV.setText(dateFormat.format(flight.getFlight().getOutboundDate()));
+
+        FlightInfoFragment target = new FlightInfoFragment();
+        Flight fff = differ.getCurrentList().get(position).getFlight();
+        target.setFlight(differ.getCurrentList().get(position).getFlight());
+
+        holder.itemView.setOnClickListener(v -> {
+            YandexMetrica.reportEvent(holder.itemView.getContext().getString(R.string.event_user_selected_flight_using_search));
+            CommonUtils.goToFragment(fragment.getParentFragmentManager(),
+                    R.id.nav_host_fragment, target);
+        });
 
 //        holder.itemView.setOnClickListener(v -> CommonUtils.goToFragment(fragment.getParentFragmentManager(),
 //                R.id.nav_host_fragment, frag));
@@ -65,7 +77,7 @@ public class RecentFlightsViewAdapter extends RecyclerView.Adapter<RecentFlights
     private static final DiffUtil.ItemCallback<RecentFlight> DIFF_CALLBACK = new DiffUtil.ItemCallback<RecentFlight>() {
         @Override
         public boolean areItemsTheSame(@NonNull RecentFlight oldProduct, @NonNull RecentFlight newProduct) {
-            return true;// oldProduct.getFlightId().equals(newProduct.getFlightId());
+            return oldProduct.equals(newProduct);
         }
 
         @SuppressLint("DiffUtilEquals")
@@ -75,8 +87,9 @@ public class RecentFlightsViewAdapter extends RecyclerView.Adapter<RecentFlights
         }
     };
 
-    public void submitList(List<RecentFlight> products) {
-        differ.submitList(products);
+    public void submitList(@NonNull List<RecentFlight> products) {
+
+            differ.submitList(products);
     }
 
     @Override

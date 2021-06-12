@@ -26,6 +26,7 @@ import com.example.aviaapplication.ui.flightInfo.FlightInfoFragment;
 import com.example.aviaapplication.ui.flightInfo.PassengerListFragment;
 import com.example.aviaapplication.utils.ActivityNavigation;
 import com.example.aviaapplication.utils.CommonUtils;
+import com.example.aviaapplication.utils.Resource;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -41,6 +42,7 @@ public class HomeFragment extends Fragment implements ActivityNavigation {
     private Button loginButton, logoutButton, paymentHistory, telegramConfirmDialogButton;
     private View telegramConfirmDialogLayout;
     private TextView usernameTextView;
+    private TextView ticketCount;
     private RoundedImageView avatarView;
 
     private Button telegramInitDialogButton, temp, temp1;
@@ -72,13 +74,12 @@ public class HomeFragment extends Fragment implements ActivityNavigation {
         loginButton = root.findViewById(R.id.button_login);
         logoutButton = root.findViewById(R.id.button_logout);
         avatarView = root.findViewById(R.id.avatar_iv);
+        ticketCount = root.findViewById(R.id.tickets_count_textview);
 
         temp = root.findViewById(R.id.temp);  //remove before production
         temp1 = root.findViewById(R.id.temp1);
         temp.setVisibility(View.GONE);
         temp1.setVisibility(View.GONE);
-
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getContext());
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 //.requestServerAuthCode(getString(R.string.server_client_id))
@@ -100,6 +101,8 @@ public class HomeFragment extends Fragment implements ActivityNavigation {
                 navController.navigate(R.id.navigation_main_search);
             }
         });
+
+        loginViewModel.countFlights();
     }
 
     private void setUpListeners() {
@@ -152,10 +155,17 @@ public class HomeFragment extends Fragment implements ActivityNavigation {
             CommonUtils.makeErrorToast(this.getContext(), getString(R.string.not_implemented));
         });
 
+        loginViewModel.getFlightCountData().observe(getViewLifecycleOwner(),
+                integer -> {
+                    if (integer.getStatus() == Resource.Status.SUCCESS)
+                        ticketCount.setText(integer.getData().toString());
+                    else
+                        ticketCount.setText(String.valueOf(0));
+                });
 
         temp.setOnClickListener(v -> {
-            CommonUtils.goToFragment(getParentFragmentManager(),
-                    R.id.nav_host_fragment, FlightInfoFragment.getInstance(1L));
+//            CommonUtils.goToFragment(getParentFragmentManager(),
+//                    R.id.nav_host_fragment, FlightInfoFragment.getInstance(1L));
         });
 
         temp1.setOnClickListener(v -> {
@@ -178,6 +188,8 @@ public class HomeFragment extends Fragment implements ActivityNavigation {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         loginViewModel.onResultFromActivity(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
+
+        loginViewModel.countFlights();
     }
 
     @Override

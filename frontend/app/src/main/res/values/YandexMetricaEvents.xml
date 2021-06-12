@@ -21,5 +21,7 @@
     <string name="event_user_perform_search">User Started Search</string>
     <string name="event_user_selected_flight_using_search">User Selected Flight Using Search</string>
     <string name="event_user_went_to_search_screen">User Went To Search Screen</string>
+    <string name="event_user_bought_tickets">User Bought Tickets</string>
+
 
 </resources>

@@ -51,7 +51,8 @@ public class FragmentCitiesSearch extends Fragment {
     public void sendChosenData(City city) {
         SearchFlightsFragment f = (SearchFlightsFragment) getTargetFragment();
 
-        if (!citiesViewModel.getRecentCityLiveData().getValue().getData().contains(city))
+        if (citiesViewModel.isLoggedIn(getContext()) &&
+                !citiesViewModel.getRecentCityLiveData().getValue().getData().contains(city))
             citiesViewModel.addRecentCity(city);
 
         if (getTag().equals("from")) {
@@ -75,7 +76,8 @@ public class FragmentCitiesSearch extends Fragment {
                 recycleViewAdapterAllCities.submitList(cities.getData());
 
             if (cities.getStatus() == Resource.Status.ERROR)
-                CommonUtils.makeErrorToast(getContext(), cities.getMessage());
+                CommonUtils.makeErrorToast(getContext(), getString(R.string.connection_error));
+//                CommonUtils.makeErrorToast(getContext(), cities.getMessage());
         });
 
         citiesViewModel.getRecentCityLiveData().observe(getViewLifecycleOwner(), cities -> {

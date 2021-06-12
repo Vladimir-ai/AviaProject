@@ -53,6 +53,7 @@
             android:textColor="@color/dark_gray"
             android:textSize="17sp" />
     </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favorite_flights_rv"
         android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 package com.example.aviaapplication.ui.flightHistory;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,13 +10,17 @@ import android.widget.ProgressBar;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.aviaapplication.R;
 import com.example.aviaapplication.additions.recyclerView.FlightHistoryRecyclerViewAdapter;
+import com.example.aviaapplication.api.models.Purchase;
 import com.example.aviaapplication.api.models.RecentCity;
+import com.example.aviaapplication.utils.CommonUtils;
+import com.example.aviaapplication.utils.Resource;
 import com.yandex.metrica.YandexMetrica;
 
 import java.util.List;
@@ -40,6 +45,7 @@ public class FlightHistoryFragment extends Fragment {
         return view;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void initViews(View view){
         emptyHistoryLayout = view.findViewById(R.id.flights_history_ll);
         progressBar = view.findViewById(R.id.flight_history_pb);
@@ -47,15 +53,33 @@ public class FlightHistoryFragment extends Fragment {
         recyclerView = view.findViewById(R.id.flight_history_rv);
         recyclerView.setAdapter(flightHistoryRecyclerViewAdapter);
 
-        flightHistoryViewModel.getFlights().observe(getViewLifecycleOwner(), this::updateList);
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        emptyHistoryLayout.setVisibility(View.GONE);
+
+        flightHistoryViewModel.getPurchases().observe(getViewLifecycleOwner(), this::updateList);
+        flightHistoryViewModel.requestPurchaseHistList(getContext());
     }
 
-    public void updateList(List<RecentCity> list){
-        if (list.isEmpty()){
+    public void updateList(Resource<List<Purchase>> list){
+        if (list.getStatus() == Resource.Status.SUCCESS && list.getData() != null) {
+            progressBar.setVisibility(View.GONE);
+
+            if (list.getData().isEmpty()) {
+                emptyHistoryLayout.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            } else {
+                emptyHistoryLayout.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                flightHistoryRecyclerViewAdapter.submitList(list.getData());
+            }
+
+        }else{
+
             emptyHistoryLayout.setVisibility(View.VISIBLE);
-        }else {
-            emptyHistoryLayout.setVisibility(View.GONE);
-            flightHistoryRecyclerViewAdapter.submitList(list);
+            recyclerView.setVisibility(View.GONE);
+            CommonUtils.makeErrorToast(getContext(), list.getMessage());
+
         }
     }
 
@@ -69,6 +93,4 @@ public class FlightHistoryFragment extends Fragment {
             getParentFragmentManager().popBackStack();
         }
     };
-
-
 }

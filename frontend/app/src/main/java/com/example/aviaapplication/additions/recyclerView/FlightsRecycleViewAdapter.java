@@ -4,30 +4,38 @@ import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.aviaapplication.R;
 import com.example.aviaapplication.api.models.City;
+import com.example.aviaapplication.api.models.FavoriteFlight;
 import com.example.aviaapplication.api.models.Flight;
+import com.example.aviaapplication.ui.favoriteFlights.FavoriteFlightsViewModel;
 import com.example.aviaapplication.ui.flightInfo.FlightInfoFragment;
 import com.example.aviaapplication.ui.foundFlights.FoundFlights;
 import com.example.aviaapplication.utils.CommonUtils;
 import com.yandex.metrica.YandexMetrica;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.security.PublicKey;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class FlightsRecycleViewAdapter extends RecyclerView.Adapter<FlightsRecycleViewAdapter.FlightsViewHolder> {
-
 
     public static class FlightsViewHolder extends RecyclerView.ViewHolder {
         private TextView titleTV, priceTV, depDateTV, fromTimeTV, toTimeTV, fromCodeTV, toCodeTV, durationTV;
@@ -46,6 +54,7 @@ public class FlightsRecycleViewAdapter extends RecyclerView.Adapter<FlightsRecyc
     }
 
     private Fragment fragment;
+    private FavoriteFlightsViewModel favoriteFlightsViewModel;
 
     public FlightsRecycleViewAdapter(Fragment fragment) {
         this.fragment = fragment;
@@ -56,7 +65,14 @@ public class FlightsRecycleViewAdapter extends RecyclerView.Adapter<FlightsRecyc
     public FlightsRecycleViewAdapter.FlightsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.element_of_found_flights, parent, false);
+
         return new FlightsRecycleViewAdapter.FlightsViewHolder(v);
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull @NotNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        favoriteFlightsViewModel = new ViewModelProvider((ViewModelStoreOwner) recyclerView.getContext()).get(FavoriteFlightsViewModel.class);
     }
 
     @Override
@@ -77,13 +93,14 @@ public class FlightsRecycleViewAdapter extends RecyclerView.Adapter<FlightsRecyc
 
         holder.durationTV.setText(diff.format(new Date(flight.getOutboundDate().getTime() - flight.getInboundDate().getTime())));
 
-        Fragment target = FlightInfoFragment.getInstance(1L);
-        holder.itemView.setOnClickListener(v -> {CommonUtils.goToFragment(fragment.getParentFragmentManager(),
+        FlightInfoFragment target = new FlightInfoFragment();
+        target.setFlight(differ.getCurrentList().get(position));
+
+        holder.itemView.setOnClickListener(v -> {
+            YandexMetrica.reportEvent(holder.itemView.getContext().getString(R.string.event_user_selected_flight_using_search));
+            CommonUtils.goToFragment(fragment.getParentFragmentManager(),
                 R.id.nav_host_fragment, target);
-                YandexMetrica.reportEvent(target.getString(R.string.event_user_selected_flight_using_search));
-        });
-
-
+            });
     }
 
     private AsyncListDiffer<Flight> differ = new AsyncListDiffer<>(this, DIFF_CALLBACK);
@@ -91,7 +108,7 @@ public class FlightsRecycleViewAdapter extends RecyclerView.Adapter<FlightsRecyc
     private static final DiffUtil.ItemCallback<Flight> DIFF_CALLBACK = new DiffUtil.ItemCallback<Flight>() {
         @Override
         public boolean areItemsTheSame(@NonNull Flight oldProduct, @NonNull Flight newProduct) {
-            return true; //oldProduct.getFlightId().equals(newProduct.getFlightId());
+            return oldProduct.equals(newProduct);
         }
 
         @SuppressLint("DiffUtilEquals")

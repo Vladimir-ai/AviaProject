@@ -36,15 +36,11 @@ import kotlin.jvm.internal.PropertyReference0Impl;
 
 public class FoundFlights extends Fragment {
 
-
-    private static String KEY_TO_DATE = "to_date";
-
     private FlightsRecycleViewAdapter flightsRecycleViewAdapter;
     private TextView emptyList;
     private RecyclerView recyclerView;
 
     private SearchFlightViewModel searchFlightViewModel;
-    List<Flight> flightFound;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable

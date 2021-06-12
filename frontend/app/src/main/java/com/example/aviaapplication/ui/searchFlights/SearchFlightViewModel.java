@@ -9,11 +9,9 @@ import androidx.lifecycle.ViewModel;
 import com.example.aviaapplication.api.models.City;
 import com.example.aviaapplication.api.models.Flight;
 import com.example.aviaapplication.api.models.RecentFlight;
-import com.example.aviaapplication.api.models.User;
 import com.example.aviaapplication.ui.home.UserRepository;
 import com.example.aviaapplication.utils.Resource;
 
-import java.security.PublicKey;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class SearchFlightViewModel extends ViewModel {
     private final MutableLiveData<Date> outboundDate = new MutableLiveData<>();
 
     private final MutableLiveData<Resource<List<RecentFlight>>> recentFlightListData = new MutableLiveData<>();
-    private final MutableLiveData<  List<Flight>> flightListData = new MutableLiveData<>();
+    private final MutableLiveData<List<Flight>> flightListData = new MutableLiveData<>();
 
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
@@ -64,10 +62,14 @@ public class SearchFlightViewModel extends ViewModel {
     }
 
     public Observable<List<Flight>> findFlights(){
-        if (departureCity.getValue() == null || arrivalCity.getValue() == null || inboundDate == null || outboundDate == null)
+        if (departureCity.getValue() == null || arrivalCity.getValue() == null)
             return null;
 
-        val flight = new Flight(departureCity.getValue(), arrivalCity.getValue(), outboundDate.getValue(), inboundDate.getValue(), 0d);
+        val flight = Flight.builder()
+                .originPlace(departureCity.getValue())
+                .destinationPlace(arrivalCity.getValue())
+                .inboundDate(inboundDate.getValue())
+                .outboundDate(outboundDate.getValue()).build();
 
         return flightRepository.findFlight(flight);
     }

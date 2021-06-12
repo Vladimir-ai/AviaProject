@@ -15,11 +15,14 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.aviaapplication.R;
+import com.example.aviaapplication.api.models.Purchase;
 import com.example.aviaapplication.api.models.RecentCity;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import lombok.val;
 
 public class FlightHistoryRecyclerViewAdapter extends RecyclerView.Adapter<FlightHistoryRecyclerViewAdapter.FlightHistoryViewHolder> {
 
@@ -41,37 +44,38 @@ public class FlightHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Fligh
         return new FlightHistoryViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull FlightHistoryViewHolder holder, int position) {
         TextView destinationTV = holder.itemView.findViewById(R.id.from_to_tv);
         TextView dateTV = holder.itemView.findViewById(R.id.date_tv);
         TextView priceTV = holder.itemView.findViewById(R.id.price_tv);
 
-        RecentCity flight = differ.getCurrentList().get(position);
+        val purchase = differ.getCurrentList().get(position);
 
-//        destinationTV.setText(flight.getFlightId().getDepAirportName() + "-" + flight.getFlightId().getArrivalAirportName());
-//        DateFormat format = new SimpleDateFormat("dd MMMM yyyy");
-//        dateTV.setText(format.format(flight.getFlightId().getDepartureDate()));
-//        priceTV.setText(Integer.toString(flight.getFlightId().getBusinessPrice() * 2) + "₽");
+        destinationTV.setText(purchase.getFlight().getOriginPlace().getPlaceName() +
+                "-" + purchase.getFlight().getDestinationPlace().getPlaceName());
+        DateFormat format = new SimpleDateFormat("dd MMMM yyyy");
+        dateTV.setText(format.format(purchase.getFlight().getOutboundDate()));
+        priceTV.setText(purchase.getFlightCost().intValue() + "₽");
     }
 
-    private AsyncListDiffer<RecentCity> differ = new AsyncListDiffer<>(this, DIFF_CALLBACK);
+    private AsyncListDiffer<Purchase> differ = new AsyncListDiffer<>(this, DIFF_CALLBACK);
 
-    private static final DiffUtil.ItemCallback<RecentCity> DIFF_CALLBACK = new DiffUtil.ItemCallback<RecentCity>() {
+    private static final DiffUtil.ItemCallback<Purchase> DIFF_CALLBACK = new DiffUtil.ItemCallback<Purchase>() {
         @Override
-        public boolean areItemsTheSame(@NonNull RecentCity oldProduct, @NonNull RecentCity newProduct) {
-//            return oldProduct.getId().equals(newProduct.getId());
-            return false;
+        public boolean areItemsTheSame(@NonNull Purchase oldProduct, @NonNull Purchase newProduct) {
+            return oldProduct.getFlight().getId().equals(newProduct.getFlight().getId());
         }
 
         @SuppressLint("DiffUtilEquals")
         @Override
-        public boolean areContentsTheSame(@NonNull RecentCity oldProduct, @NonNull RecentCity newProduct) {
-            return oldProduct.equals(newProduct);
+        public boolean areContentsTheSame(@NonNull Purchase oldProduct, @NonNull Purchase newProduct) {
+            return oldProduct.getFlight().getId().equals(newProduct.getFlight().getId());
         }
     };
 
-    public void submitList(List<RecentCity> products) {
+    public void submitList(List<Purchase> products) {
         differ.submitList(products);
     }
 

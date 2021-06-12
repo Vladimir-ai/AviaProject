@@ -1,6 +1,8 @@
 package com.example.aviaapplication.ui.flightInfo;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -17,26 +19,36 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.aviaapplication.R;
 import com.example.aviaapplication.api.models.Flight;
+import com.example.aviaapplication.ui.searchFlights.SearchFlightsFragment;
 import com.example.aviaapplication.utils.CommonUtils;
 import com.example.aviaapplication.utils.GestureDetectorTurnBack;
+import com.example.aviaapplication.utils.Resource;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.yandex.metrica.YandexMetrica;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
 
 public class FlightInfoFragment extends Fragment {
     private ScrollView view;
+
     private FlightInfoViewModel flightInfoViewModel;
 
-    private Long flightId;
     private static String KEY_FLIGHT_ID = "flightId";
+
+    private Flight flight;
+    private Integer persAmount;
+    private Double cost;
 
     private TextView costTV;
     private TextView depTimeTV;
@@ -56,27 +68,30 @@ public class FlightInfoFragment extends Fragment {
     private MaterialButton buttonBusiness;
     private MaterialButton buttonEconomy;
 
-
-    public static FlightInfoFragment getInstance(Long flId) {
-        final FlightInfoFragment frag = new FlightInfoFragment();
-        final Bundle args = new Bundle();
-        args.putLong(KEY_FLIGHT_ID, flId);
-        frag.setArguments(args);
-        return frag;
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        flightId = getArguments().getLong(KEY_FLIGHT_ID);
         View root = inflater.inflate(R.layout.fragment_flight_info, container, false);
         view = root.findViewById(R.id.flight_info_ll);
-        flightInfoViewModel = new FlightInfoViewModel(this.getActivity().getApplication(), flightId);
+
+        flightInfoViewModel = ViewModelProviders.of(getActivity()).get(FlightInfoViewModel.class);
+        flightInfoViewModel.setFlight(flight);
+
+
+        Context context = getActivity();
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                getString(R.string.key_current_passenger_count_file), Context.MODE_PRIVATE);
+        persAmount = sharedPref.getInt(getString(R.string.key_current_passenger_count), 0);//TODO
+
         initViews(root);
         setUpListeners();
         return root;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -102,30 +117,30 @@ public class FlightInfoFragment extends Fragment {
         favCheckbox.setChecked(flightInfoViewModel.isFavorite());
 
         Flight fl = flightInfoViewModel.getFlight().getValue();
-//        costTV.setText(fl.getEconomyPrice().toString());
-//
-//        DateFormat time = new SimpleDateFormat("HH:mm");
-//        DateFormat date = new SimpleDateFormat("dd MMMM, E", new Locale("ru"));
-//
-//        depTimeTV.setText(time.format(fl.getDepartureDate()));
-//        depDateTV.setText(date.format(fl.getDepartureDate()));
-//        depCityTV.setText(fl.getDepCity().getPlaceName());
-//        depAirportTV.setText(fl.getDepCity().getPlaceName());
-//
-//        landTimeTV.setText(time.format(fl.getArrivalDate()));
-//        landDateTV.setText(date.format(fl.getArrivalDate()));
-//        landCityTV.setText(fl.getArrivalCity().getPlaceName());
-//        landAirportTV.setText(fl.getArrivalCity().getPlaceName());
-//
-//        buttonBuy.setText("Купить за " + fl.getEconomyPrice().toString() + "₽");
-//
-//        Date substr = new Date(fl.getDepartureDate().getTime() - fl.getArrivalDate().getTime());
+        costTV.setText(fl.getCost().toString());
 
-//        flightTimeDurationTV.setText(time.format(substr));
+        DateFormat time = new SimpleDateFormat("HH:mm");
+        DateFormat date = new SimpleDateFormat("dd MMMM, E", new Locale("ru"));
 
-        if(flightInfoViewModel.isLoggedIn())
-            flightInfoViewModel.addToRecentViewed();
+        depTimeTV.setText(time.format(fl.getOutboundDate()));
+        depDateTV.setText(date.format(fl.getOutboundDate()));
+        depCityTV.setText(fl.getOriginPlace().getCountryName());
+        depAirportTV.setText(fl.getOriginPlace().getPlaceName());
 
+        landTimeTV.setText(time.format(fl.getInboundDate()));
+        landDateTV.setText(date.format(fl.getInboundDate()));
+        landCityTV.setText(fl.getOriginPlace().getCountryName());
+        landAirportTV.setText(fl.getOriginPlace().getPlaceName());
+
+        buttonBuy.setText("Купить за " + String.format("%.2f", persAmount * fl.getCost()) + "₽");
+        cost = persAmount * fl.getCost();
+
+        Date substr = new Date(fl.getOutboundDate().getTime() - fl.getInboundDate().getTime());
+
+        flightTimeDurationTV.setText(time.format(substr));
+
+        flightInfoViewModel.addToRecentViewed();
+        flightInfoViewModel.initIsFavoriteLiveData();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -139,36 +154,78 @@ public class FlightInfoFragment extends Fragment {
             if (mDetector.onTouchEvent(event)) {
                 getActivity().onBackPressed();
             }
+
             return mDetector.onTouchEvent(event);
         });
 
         buttonBusiness.setOnClickListener(v -> {
             Flight fl = flightInfoViewModel.getFlight().getValue();
-//            costTV.setText(fl.getBusinessPrice().toString());
-//            buttonBuy.setText("Купить за " + fl.getBusinessPrice().toString() + "₽");
+            Random random = new Random();
+            random.setSeed(fl.getCost().longValue());
+            Double price = fl.getCost() + fl.getCost() / 10d + random.nextDouble() * 10d % fl.getCost();
+
+            price = Math.round(price * 10d) / 10d;
+
+            costTV.setText(price.toString());
+            buttonBuy.setText("Купить за " + String.format("%.2f", persAmount * price) + "₽");
+            cost = persAmount * price;
         });
 
         buttonEconomy.setOnClickListener(v -> {
             Flight fl = flightInfoViewModel.getFlight().getValue();
-//            costTV.setText(fl.getEconomyPrice().toString());
-//            buttonBuy.setText("Купить за " + fl.getEconomyPrice().toString() + "₽");
+            costTV.setText(String.format("%.2f", persAmount * fl.getCost()));
+            buttonBuy.setText("Купить за " + String.format("%.2f", persAmount * fl.getCost()) + "₽");
+            cost = persAmount * fl.getCost();
         });
 
         buttonBuy.setOnClickListener(v -> {
-            CommonUtils.makeErrorToast(this.getContext(), getString(R.string.not_implemented));
-        });
+                    if (flightInfoViewModel.isLoggedIn(getContext())) {
+                        flightInfoViewModel.buyTicket(flight, cost, persAmount);
 
-        favCheckbox.setOnClickListener(v -> {
-            if (flightInfoViewModel.isLoggedIn()) {
-                if (!favCheckbox.isChecked())
-                    flightInfoViewModel.unfavorite();
-                else
+                        Map<String, Object> result = new HashMap<>();
+                        result.put("Ticket cost", cost);
+                        result.put("Passenger count", persAmount);
+                        YandexMetrica.reportEvent(getString(R.string.event_user_bought_tickets), result);
+                    } else
+                        CommonUtils.makeErrorToast(getContext(), getString(R.string.login_error));
+                });
+
+        favCheckbox.setOnClickListener(v ->
+
+        {
+            if (favCheckbox.isChecked()) {
+                if (flightInfoViewModel.isLoggedIn(getContext()))
                     flightInfoViewModel.makeFavorite();
-            }else {
-                favCheckbox.setChecked(false);
-                CommonUtils.makeErrorToast(this.getContext(), "Сначала авторизуйтесь в личном кабинете");
-            }
+                else
+                    CommonUtils.makeErrorToast(getContext(), getString(R.string.login_error));
+            } else
+                flightInfoViewModel.unfavorite();
+
+            favCheckbox.setChecked(!favCheckbox.isChecked());
         });
 
+        flightInfoViewModel.getIsFavoriteLiveData().
+
+                observe(getViewLifecycleOwner(), new Observer<Resource<Boolean>>() {
+                    @Override
+                    public void onChanged(Resource<Boolean> booleanResource) {
+                        if (booleanResource.getStatus() == Resource.Status.SUCCESS)
+                            favCheckbox.setChecked(booleanResource.getData());
+                        else
+                            CommonUtils.makeErrorToast(getContext(), getString(R.string.connection_error));
+                        //CommonUtils.makeErrorToast(getContext(), booleanResource.getMessage());
+                    }
+                });
+
+        flightInfoViewModel.getIsSuccessful().
+
+                observe(getViewLifecycleOwner(), voidResource ->
+
+                {
+                    if (voidResource.getStatus() == Resource.Status.SUCCESS)
+                        CommonUtils.goToFragment(getParentFragmentManager(), R.id.nav_host_fragment, SearchFlightsFragment.class);
+                    else
+                        CommonUtils.makeErrorToast(getContext(), getString(R.string.connection_error));
+                });
     }
 }

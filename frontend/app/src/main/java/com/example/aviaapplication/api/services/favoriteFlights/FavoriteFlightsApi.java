@@ -16,13 +16,16 @@ import retrofit2.http.Path;
 public interface FavoriteFlightsApi {
 
     @GET("favorite/{userId}")
-    Call<List<Flight>> getFavoriteList(@Path("userId") String userId);
+    Call<List<FavoriteFlight>> getFavoriteList(@Path("userId") String userId);
 
-    @POST("favorite/linkedInfo")
+    @POST("favorite/likedInfo")
     Call<Integer> getInfo(@Body FavoriteFlight favoriteFlight);
 
+    @POST("favorite/delete")
+    Call<Boolean> deleteFromFavorite(@Body FavoriteFlight favoriteFlight);
+
     @POST("favorite")
-    Call<RequestBody> addToFavorite(@Body FavoriteFlight flight);
+    Call<Void> addToFavorite(@Body FavoriteFlight flight);
 
     @DELETE("favorite/{flight_id}")
     Call<Boolean> deleteFromFavorite(@Path("flight_id") Integer flight_id);

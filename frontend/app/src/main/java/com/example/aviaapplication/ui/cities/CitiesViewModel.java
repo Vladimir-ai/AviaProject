@@ -1,6 +1,7 @@
 package com.example.aviaapplication.ui.cities;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -52,5 +53,9 @@ public class CitiesViewModel extends AndroidViewModel {
         User currentUser = userRepository.getCurrentUser(getApplication().getApplicationContext());
         if (currentUser != null)
             citiesRepository.getRecentCities(currentUser.getEmail(), recentCityLiveData);
+    }
+
+    public boolean isLoggedIn(Context context){
+        return userRepository.getCurrentUser(context) != null;
     }
 }

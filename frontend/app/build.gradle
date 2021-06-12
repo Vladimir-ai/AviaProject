@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.application'
-    id 'com.google.gms.google-services'
 }
 
 android {
@@ -47,9 +46,9 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
 
-    //firebase for analytics
-    implementation platform('com.google.firebase:firebase-bom:28.0.1')
-    implementation 'com.google.firebase:firebase-analytics'
+//    //firebase for analytics
+//    implementation platform('com.google.firebase:firebase-bom:28.0.1')
+//    implementation 'com.google.firebase:firebase-analytics'
 
     //yandex for analytics
     implementation 'com.yandex.android:mobmetricalib:3.20.2'

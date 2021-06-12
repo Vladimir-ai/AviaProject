@@ -55,10 +55,11 @@
     <string name="hint_pass_data_tv">Паспортные данные</string>
 
 <!--  shared preferenses keys  -->
-    <string name="key_current_user_name">tp.project.aviaApplication.key_current_user_name</string>
+    <string name="key_current_passenger_count_file">tp.project.aviaApplication.key_current_passenger_count</string>
+    <string name="key_current_passenger_count">passenger_amount</string>
 
-
-<!--  client_api  -->
-<!--    <string name="server_client_id">717640529342-efnptksjs3v9fs7ehlu0qs0splujfigl.apps.googleusercontent.com</string>-->
+<!--  errors  -->
+    <string name="connection_error">Ошибка соединения с сервером</string>
+    <string name="login_error">Вам нужно авторизоваться в личном кабинете</string>
 
 </resources>

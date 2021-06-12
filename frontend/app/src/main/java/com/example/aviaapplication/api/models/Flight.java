@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Flight implements Serializable, Cloneable {
+    Integer id;
     City originPlace;
     City destinationPlace;
     Date outboundDate;
