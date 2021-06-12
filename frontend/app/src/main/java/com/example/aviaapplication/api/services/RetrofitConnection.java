@@ -27,7 +27,7 @@ public class RetrofitConnection {
                     .create();
 
             retrofitConnect = new Retrofit.Builder()
-                    .baseUrl("http://192.168.1.64:8080/api/")
+                    .baseUrl("https://avia-project-dvi.herokuapp.com/api/")
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                     .client(httpClient.build())

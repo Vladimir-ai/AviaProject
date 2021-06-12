@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
@@ -35,6 +34,7 @@ import com.example.aviaapplication.ui.foundFlights.FoundFlights;
 import com.example.aviaapplication.utils.CommonUtils;
 import com.example.aviaapplication.utils.Resource;
 import com.yandex.metrica.YandexMetrica;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -68,6 +68,7 @@ public class SearchFlightsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_flights, container, false);
+        assert container != null;
         containerId = container.getId();
         initViews(view);
         setListeners();
@@ -134,6 +135,7 @@ public class SearchFlightsFragment extends Fragment {
                 countTV.setText(Integer.toString(currState - 1));
 
                 Context context = getActivity();
+                assert context != null;
                 SharedPreferences sharedPref = context.getSharedPreferences(
                         getString(R.string.key_current_passenger_count_file), Context.MODE_PRIVATE);
                 sharedPref.edit().putInt(getString(R.string.key_current_passenger_count), countOfPersons).apply();
@@ -149,6 +151,7 @@ public class SearchFlightsFragment extends Fragment {
             }
 
             Context context = getActivity();
+            assert context != null;
             SharedPreferences sharedPref = context.getSharedPreferences(
                     getString(R.string.key_current_passenger_count_file), Context.MODE_PRIVATE);
             sharedPref.edit().putInt(getString(R.string.key_current_passenger_count), countOfPersons).apply();
@@ -217,7 +220,7 @@ public class SearchFlightsFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
                 navController.navigate(R.id.navigation_main_search);
             }
         });
@@ -246,7 +249,7 @@ public class SearchFlightsFragment extends Fragment {
 
             Map<String, Object> result = new HashMap<>();
             result.put("city_name", cityTo.getPlaceName());
-            YandexMetrica.reportEvent(getString(R.string.event_selected_arrival_city));
+            YandexMetrica.reportEvent(getString(R.string.event_selected_arrival_city), result);
         } else {
             cityToTV.setText("Куда");
         }
@@ -255,7 +258,7 @@ public class SearchFlightsFragment extends Fragment {
     @SuppressLint("SetTextI18n")
     public void setNewDate(Calendar startDate, Calendar lastDate) {
 
-        SimpleDateFormat format = new SimpleDateFormat("d MMMM ");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("d MMMM ");
         if (startDate != null && lastDate != null) {
             SearchFlightsFragment.startDate = initDate(startDate);
             SearchFlightsFragment.lastDate = initDate(lastDate);
@@ -311,6 +314,7 @@ public class SearchFlightsFragment extends Fragment {
         YandexMetrica.reportEvent(getString(R.string.event_user_perform_search), result);
 
         Context context = getActivity();
+        assert context != null;
         SharedPreferences sharedPref = context.getSharedPreferences(
                 getString(R.string.key_current_passenger_count_file), Context.MODE_PRIVATE);
         sharedPref.edit().putInt(getString(R.string.key_current_passenger_count), countOfPersons).apply();
@@ -319,32 +323,33 @@ public class SearchFlightsFragment extends Fragment {
 
         List<Flight> flightList = new LinkedList<>();
 
-        searchFlightViewModel.findFlights().observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Flight>>() {
-            @Override
-            public void onNext(@NonNull List<Flight> flights) {
-                if (!flights.isEmpty())
-                    flightList.addAll(flights);
-            }
+        searchFlightViewModel.findFlights().observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<List<Flight>>() {
+                    @Override
+                    public void onNext(@NonNull List<Flight> flights) {
+                        if (!flights.isEmpty())
+                            flightList.addAll(flights);
+                    }
 
-            @Override
-            public void onError(@NonNull Throwable e) {
+                    @Override
+                    public void onError(@NonNull Throwable e) {
 //                CommonUtils.makeErrorToast(getContext(), e.getLocalizedMessage());
-                CommonUtils.makeErrorToast(getContext(), getString(R.string.connection_error));
-            }
+                        CommonUtils.makeErrorToast(getContext(), getString(R.string.connection_error));
+                    }
 
-            @Override
-            public void onComplete() {
-                searchFlightViewModel.getIsLoading().setValue(false);
-                searchFlightViewModel.getFlightsLiveData().postValue(flightList);
+                    @Override
+                    public void onComplete() {
+                        searchFlightViewModel.getIsLoading().setValue(false);
+                        searchFlightViewModel.getFlightsLiveData().postValue(flightList);
 
-                Fragment f = new FoundFlights();
-                getParentFragmentManager().beginTransaction()
-                        .replace(containerId, f)
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .addToBackStack(SearchFlightsFragment.class.toString())
-                        .commit();
-            }
-        });
+                        Fragment f = new FoundFlights();
+                        getParentFragmentManager().beginTransaction()
+                                .replace(containerId, f)
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                                .addToBackStack(SearchFlightsFragment.class.toString())
+                                .commit();
+                    }
+                });
 
 
         //        searchFlightViewModel.getFlightsLiveData()
