@@ -34,6 +34,7 @@
 
 - [Ссылка на Swagger](https://avia-project-dvi.herokuapp.com/api/swagger-ui.html)
 
-## Демо видео на вторую аттестацию
+## Демо видео
 
-- [Демо-видео](https://drive.google.com/file/d/1O7McQo1_UUUHJ0CmD8nI6Mnwqdw4EBwk/view?usp=sharing)
+- [Демо-видео на вторую аттестацию](https://drive.google.com/file/d/1O7McQo1_UUUHJ0CmD8nI6Mnwqdw4EBwk/view?usp=sharing)
+- [Демо-видео на третью аттестацию](https://drive.google.com/file/d/1igjzgn7H0D1wJ9U_9Nkk8SrGRRlIqBlh/view?usp=sharing)
