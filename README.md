@@ -38,3 +38,4 @@
 
 - [Демо-видео на вторую аттестацию](https://drive.google.com/file/d/1O7McQo1_UUUHJ0CmD8nI6Mnwqdw4EBwk/view?usp=sharing)
 - [Демо-видео на третью аттестацию](https://drive.google.com/file/d/1igjzgn7H0D1wJ9U_9Nkk8SrGRRlIqBlh/view?usp=sharing)
+- [Презентация](https://drive.google.com/file/d/1Km7J5hUowXY539kMLjIQ0eKxcW18gCnf/view?usp=sharing) 
