@@ -21,7 +21,7 @@ class Utils:
                     count += 1
             if count == 0:
                 continue
-            result_str = 'На избранные направления '
+            result_str = 'На избранные направления\n'
             for i in res['Quotes']:
                 if i['MinPrice'] >= item[-1]:
                     continue

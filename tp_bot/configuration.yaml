@@ -1,15 +1,16 @@
+database:
+  host: ec2-54-73-58-75.eu-west-1.compute.amazonaws.com
+  name: d97fg5ij3niqh9
+  password: 4a5225e4c419b411a4b4d82abf8fc5adb8ea79cd16f4ad0d85cc1c0c9a47a29b
+  user: fubgfymrsebxin
+database_tg:
+  host: ec2-54-220-35-19.eu-west-1.compute.amazonaws.com
+  name: d5aio69ca28gfq
+  password: ed7eebffe96aa876109060b3a2982eee419b0212444cbefe428f222d148fdb74
+  user: mjarnrklcmjhdm
 name: tp bot
 telegram:
   token: 787212472:AAGErQ8b2VGD8sMCEqsucTZRx7wBOrbCHyw
-
-database:
-  name: d97fg5ij3niqh9
-  user: fubgfymrsebxin
-  password: 4a5225e4c419b411a4b4d82abf8fc5adb8ea79cd16f4ad0d85cc1c0c9a47a29b
-  host: ec2-54-73-58-75.eu-west-1.compute.amazonaws.com
-
-database_tg:
-  name: d5aio69ca28gfq
-  user: mjarnrklcmjhdm
-  password: ed7eebffe96aa876109060b3a2982eee419b0212444cbefe428f222d148fdb74
-  host: ec2-54-220-35-19.eu-west-1.compute.amazonaws.com
+telegram_bot:
+  password: admin
+  schedule: 1

@@ -36,7 +36,22 @@ class Telegram_DB:
     def get_person_by_id(self, id):
         cursor = self.conn.cursor()
         cursor.execute(
-            "SELECT telegram_id FROM telegram_user WHERE user_id=%s", (id,))
+            """SELECT telegram_id, "isSilent" FROM telegram_user WHERE user_id=%s""", (id,))
         r = cursor.fetchone()
         cursor.close()
         return r
+
+    def get_person_notifications_by_tgid(self, id):
+        cursor = self.conn.cursor()
+        cursor.execute(
+            """SELECT "isSilent" FROM telegram_user WHERE telegram_id=%s""", (id,))
+        r = cursor.fetchone()
+        cursor.close()
+        return r
+
+    def set_notification(self,user_id,is_silent):
+        cursor = self.conn.cursor()
+        cursor.execute(
+            """UPDATE telegram_user t SET "isSilent" = %s WHERE telegram_id = %s""",
+            (is_silent, user_id,))
+        cursor.close()
